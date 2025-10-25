@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia';
 
-export const useMultiAuthStore = defineStore('multiAuth', {
-  // 状态定义 - 不使用单独的接口类型
+export const useLoginManage = defineStore('multiAuth', {
   state: () => ({
-    // 直接定义账号数组，包含所需字段
     accounts: localStorage.getItem('userAccounts') 
       ? JSON.parse(localStorage.getItem('userAccounts')!) 
       : []

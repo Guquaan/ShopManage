@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
-import { GoodsMange } from '.././store/Goods'
+import { GoodsManage } from './Goods'
+import { UserManage } from './User';
+import { getRandomFourDigits } from '../data/Random';
 // 订单状态类型定义
 type OrderStatus = '待付款' | '已付款' | '已发货' | '已完成' | '已取消';
 // 订单接口定义
@@ -26,23 +28,28 @@ export const ordersManage = defineStore('ordersmanage', {
     actions: {
         // 获取虚拟数据
         getOrders(total: number) {
-            const goodsStore = GoodsMange()
+            const goodsStore = GoodsManage()
+            const userStore = UserManage()
             const orders: Order[] = [];
             const statuses: OrderStatus[] = ['待付款', '已付款', '已发货', '已完成', '已取消'];
             for (let i = 0; i < total; i++) {
-                const id = i + 1;
+                const id = getRandomFourDigits();
                 // 随机选择一个商品
                 const randomGoods = goodsStore.goods.length
                     ? goodsStore.goods[Math.floor(Math.random() * goodsStore.goods.length)]
                     : null;
                 const quantity = Math.floor(Math.random() * 10) + 1;
                 const price = randomGoods ?  randomGoods.price : 100
+                if(!userStore.users.length) userStore.getUsers(50)
+                const custom = userStore.users.length
+                    ? userStore.users[Math.floor(Math.random() * userStore.users.length)]!.username 
+                    : ''
                 orders.push({
                     id,
                     orderNo: `ORD${Date.now().toString().slice(-6)}${id.toString().padStart(3, '0')}`,
                     productName: randomGoods ? randomGoods.name : `商品名称${id}`,
                     productImage: randomGoods ? randomGoods.image : '',
-                    customerName: `客户${Math.floor(Math.random() * 1000)}`,
+                    customerName: custom,
                     quantity,
                     amount: price * quantity,
                     status: statuses[Math.floor(Math.random() * statuses.length)] || '已完成',
@@ -79,7 +86,7 @@ export const ordersManage = defineStore('ordersmanage', {
                 }
                 const newCount = this.orders[index].quantity
                 const add = newCount - oldCount!
-                GoodsMange().handleStock(this.orders[index].productName,add)
+                GoodsManage().handleStock(this.orders[index].productName,add)
                 localStorage.setItem('orders', JSON.stringify(this.orders))
                 return this.orders[index]
             }
@@ -90,8 +97,8 @@ export const ordersManage = defineStore('ordersmanage', {
         cancelOrders(id: number) {
             const index = this.orders.findIndex((item: Order) => item.id === id)
             if (index !== -1) {
-                this.orders[index].status = '已取消';
-                this.orders[index].updateTime = new Date().toLocaleString();
+                this.orders[index]!.status = '已取消';
+                this.orders[index]!.updateTime = new Date().toLocaleString();
                 localStorage.setItem('orders', JSON.stringify(this.orders));
                 return true;
             }
@@ -101,9 +108,9 @@ export const ordersManage = defineStore('ordersmanage', {
         // 发货订单
         shipOrder(id: number) {
             const index = this.orders.findIndex(o => o.id === id);
-            if (index !== -1 && this.orders[index].status === '已付款') {
-                this.orders[index].status = '已发货';
-                this.orders[index].updateTime = new Date().toLocaleString();
+            if (index !== -1 && this.orders[index]!.status === '已付款') {
+                this.orders[index]!.status = '已发货';
+                this.orders[index]!.updateTime = new Date().toLocaleString();
                 localStorage.setItem('orders', JSON.stringify(this.orders));
                 return true;
             }

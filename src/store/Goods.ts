@@ -16,24 +16,25 @@ import home2 from './../data/photo/家具2.png'
 import home3 from './../data/photo/家具3.png'
 import home4 from './../data/photo/家具4.png'
 import { ElMessage } from 'element-plus'
+import { getRandomFourDigits } from '../data/Random'
 // 表格数据
 interface Product {
-  id: number;
-  name: string;
-  image: string | undefined;
-  category: string;
-  price: number;
-  stock: number;
-  sales: number;
-  status: string | undefined;
-  updateTime: string;
+    id: number;
+    name: string;
+    image: string | undefined;
+    category: string;
+    price: number;
+    stock: number;
+    sales: number;
+    status: string | undefined;
+    updateTime: string;
 }
 
-export const GoodsMange = defineStore('goodsmange', {
+export const GoodsManage = defineStore('goodsmange', {
     // 数据状态
-    state: (): { goods: Product[] } => ({  
-    goods: localStorage.getItem('goods') ? JSON.parse(localStorage.getItem('goods')!) : []
-  }),
+    state: (): { goods: Product[] } => ({
+        goods: localStorage.getItem('goods') ? JSON.parse(localStorage.getItem('goods')!) : []
+    }),
 
     // 实现方法
     actions: {
@@ -48,8 +49,8 @@ export const GoodsMange = defineStore('goodsmange', {
             const photoPathHome = [home1, home2, home3, home4];
             // 库存状态
             const statuses = ['在售', '下架', '库存不足'];
-            const goods = Array.from({ length: total }, (_, i) => {
-                const id = i + 1;
+            const goods = Array.from({ length: total }, ( _ ) => {
+                const id = getRandomFourDigits();
                 const stock = Math.floor(Math.random() * 100);  // 商品库存数量
                 const status = stock < 10 ? '库存不足' : (statuses[Math.floor(Math.random() * 2)] || '在售');  // 库存状态
                 const category = String(categories[Math.floor(Math.random() * categories.length)]);
@@ -73,9 +74,9 @@ export const GoodsMange = defineStore('goodsmange', {
         },
 
         // 持久性删除数据
-        deleteGoodsData(row : Product) {
-            this.goods = this.goods.filter((item :any) => item.id !== row.id)
-            localStorage.setItem('goods',JSON.stringify(this.goods))
+        deleteGoodsData(row: Product) {
+            this.goods = this.goods.filter((item: any) => item.id !== row.id)
+            localStorage.setItem('goods', JSON.stringify(this.goods))
 
         },
         // 修改数据
@@ -86,7 +87,7 @@ export const GoodsMange = defineStore('goodsmange', {
                     this.goods[index] = {
                         ...this.goods[index],
                         ...form,
-                        id:form.id,
+                        id: form.id,
                         price: Number(form.price),
                         stock: Number(form.stock),
                         updateTime: new Date().toLocaleString(),
@@ -117,16 +118,42 @@ export const GoodsMange = defineStore('goodsmange', {
         },
 
         // 根据订单改变库存
-        handleStock(name:string ,count:number){
-            const index = this.goods.findIndex((item:Product) => item.name === name)
-            console.log(index,name)
-            if(index !== -1){
-            this.goods[index].stock = this.goods[index].stock - count
-            this.goods[index].sales = this.goods[index].sales + count
-            if(this.goods[index].stock < 10){
-                this.goods[index].status = '库存不足'
+        handleStock(name: string, count: number) {
+            const index = this.goods.findIndex((item: Product) => item.name === name)
+            console.log(index, name)
+            if (index !== -1) {
+                this.goods[index]!.stock = this.goods[index]!.stock - count
+                this.goods[index]!.sales = this.goods[index]!.sales + count
+                if (this.goods[index]!.stock < 10) {
+                    this.goods[index]!.status = '库存不足'
+                }
+                localStorage.setItem('goods', JSON.stringify(this.goods))
             }
-            localStorage.setItem('goods', JSON.stringify(this.goods))
+        },
+        // 更新库存并保存到本地存储
+        updateGoodsStock(goods: Product) {
+            // 定义防抖计时器变量，防止添加减少的时候出现信息弹出频繁
+            let messageTimer: any = null;
+            const showSuccessMessage = () => {
+                if (messageTimer) {
+                    clearTimeout(messageTimer);
+                }
+                messageTimer = setTimeout(() => {
+                    ElMessage({
+                        type: 'success',
+                        message: '库存已更新'
+                    });
+                    messageTimer = null;
+                }, 500);
+            };
+            const index = this.goods.findIndex((item: Product) => item.id === goods.id);
+            if (index !== -1) {
+                this.goods[index]!.stock = goods.stock;
+                // 更新库存状态
+                this.goods[index]!.status = goods.stock < 10 ? '库存不足' : '在售';
+                // 持久化保存
+                localStorage.setItem('goods', JSON.stringify(this.goods));
+                showSuccessMessage();
             }
         }
     }

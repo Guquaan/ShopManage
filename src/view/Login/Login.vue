@@ -42,7 +42,7 @@ import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 // 导入pinia
-import { useMultiAuthStore } from '../../store/Login'
+import { useLoginManage } from '../../store/Login'
 
 const router = useRouter()
 // 登陆数据
@@ -135,7 +135,7 @@ const rules = reactive({
 })
 
 // 创建store实例
-const authStore = useMultiAuthStore()
+const authStore = useLoginManage()
 // 登录处理函数
 const handleLogin = () => {
     const token = `321987${new Date().toString().replace(/\D/g, '')}`

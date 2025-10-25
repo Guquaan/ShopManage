@@ -65,7 +65,7 @@
               @click="decreaseStock(goods)"
               :disabled="goods.stock <= 0"
             ><el-icon><Minus/></el-icon></el-button>
-            <span class="stock-value"><el-input v-model="goods.stock" size="small" min="0" @input="updateGoodsStock(goods)"/></span>
+            <span class="stock-value"><el-input v-model="goods.stock" size="small" min="0" @input="goodsStore.updateGoodsStock(goods)"/></span>
             <el-button 
               size="small" 
               type="primary" 
@@ -87,7 +87,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Setting, Plus, Search, Minus } from '@element-plus/icons-vue';
-import { GoodsMange } from '../../store/Goods';
+import { GoodsManage } from '../../store/Goods';
 
 interface Product {
   id: number;
@@ -100,7 +100,7 @@ interface Product {
   status: string | undefined;
   updateTime: string;
 }
-const goodsStore = GoodsMange();
+const goodsStore = GoodsManage();
 
 // 状态管理
 const searchName = ref('');
@@ -119,43 +119,19 @@ const decreaseStock = (goods: any) => {
   if (goods.stock > 0) {
     goods.stock--;
     // 更新状态并持久化
-    updateGoodsStock(goods);
+    goodsStore.updateGoodsStock(goods as Product);
   }
 };
 
 const increaseStock = (goods: any) => {
   goods.stock++;
   // 更新状态并持久化
-  updateGoodsStock(goods);
+  goodsStore.updateGoodsStock(goods as Product);
 };
 
-// 定义防抖计时器变量，防止添加减少的时候出现信息弹出频繁
-let messageTimer : any = null;
-const showSuccessMessage = () => {
-  if (messageTimer) {
-    clearTimeout(messageTimer);
-  }
-  messageTimer = setTimeout(() => {
-    ElMessage({
-      type: 'success',
-      message: '库存已更新'
-    });
-    messageTimer = null;
-  }, 500);
-};
 
-// 更新库存并保存到本地存储
-const updateGoodsStock = (goods: Product) => {
-  const index = goodsStore.goods.findIndex((item: Product) => item.id === goods.id);
-  if (index !== -1) {
-    goodsStore.goods[index].stock = goods.stock;
-    // 更新库存状态
-    goodsStore.goods[index].status = goods.stock < 10 ? '库存不足' : '在售';
-    // 持久化保存
-    localStorage.setItem('goods', JSON.stringify(goodsStore.goods));
-    showSuccessMessage();
-  }
-};
+
+
 
 // 筛选商品
 const filteredGoods = computed(() => {

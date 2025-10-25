@@ -29,7 +29,7 @@
           <el-dropdown>
             <span class="user-trigger">
               <el-avatar :size="32">
-                <img src="https://picsum.photos/id/1005/200/200" alt="用户头像" />
+                <img src="../../data/photo/登陆头像.png" alt="用户头像" />
               </el-avatar>
               <span class="user-name">管理员</span>
               <el-icon class="arrow-icon"></el-icon>
@@ -84,7 +84,6 @@
               <el-menu-item index="2-1" @click="setBreadcrumb(['用户管理', '用户列表'])">用户列表</el-menu-item>
               <el-menu-item index="2-2" @click="setBreadcrumb(['用户管理', '权限设置'])">权限设置</el-menu-item>
             </el-sub-menu>
-            
             <el-sub-menu index="3">
               <template #title>
                 <el-icon><Coin /></el-icon>
@@ -123,7 +122,7 @@ import {
   Coin
 } from '@element-plus/icons-vue';
 import { useRouter,useRoute } from 'vue-router';
-import { useMultiAuthStore } from '../../store/Login'
+import { useLoginManage} from '../../store/Login'
 import { ElMessage } from 'element-plus';
 ;
 
@@ -198,7 +197,7 @@ const handleSelect = (key : any, keyPath:any) => {
 
 // 退出登录功能
 const Layout = () => {
-  useMultiAuthStore().logout()
+  useLoginManage().logout()
   router.push('/login')
   ElMessage.success('退出登录成功')
 }

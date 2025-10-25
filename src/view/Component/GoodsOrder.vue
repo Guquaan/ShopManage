@@ -201,7 +201,7 @@
       </el-form-item>
       <el-form-item label="商品名称" prop="productName">
         <el-select v-model="form.productName" placeholder="请选择商品" >
-              <el-option v-for="item in goodsMange.goods" :label="item.name" :key="item.id" :value="item.name" 
+              <el-option v-for="item in goodsManage.goods" :label="item.name" :key="item.id" :value="item.name" 
                 v-show="item.status === '在售'"
               />
         </el-select>
@@ -211,21 +211,24 @@
           class="upload-demo"
           :on-preview="handlePreview"
           :on-remove="handleRemove"
-          :file-list="handleEditOrAdd === 'edit' ? fileList : [{url: goodsMange.goods.find(item => item.name === form.productName)?.image}]"
+          :file-list="handleEditOrAdd === 'edit' ? fileList : [{url: goodsManage.goods.find(item => item.name === form.productName)?.image}]"
           list-type="picture"
           action="fake-action"  
           :http-request="handleFakeUpload"
         >
           <el-button type="primary" v-if="!fileList">点击上传</el-button>
-          <template #tip>
-            <div class="el-upload__tip" v-if="!fileList">
-              只能上传jpg/png文件，且不超过500kb
-            </div>
-          </template>
         </el-upload>
       </el-form-item>
       <el-form-item label="客户名称" prop="customerName">
-        <el-input v-model="form.customerName" />
+        <el-select v-model="form.customerName" placeholder="请选择客户">
+          <el-option 
+            v-for="user in userManage.users" 
+            :key="user.id" 
+            :label="user.username" 
+            :value="user.username" 
+            v-show = "user.status === '正常'"
+          />
+      </el-select>
       </el-form-item>
       <el-form-item label="购买数量" prop="quantity">
         <el-input v-model="form.quantity" type="number" min="1" @input="handleCount" />
@@ -257,11 +260,13 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { UploadUserFile } from 'element-plus'
-import { GoodsMange } from '../../store/Goods';
+import { GoodsManage } from '../../store/Goods';
 import { ordersManage } from '../../store/Order'
+import { UserManage } from '../../store/User'
 // 引入商品数据用于关联
-const goodsMange = GoodsMange();
-const orderMange = ordersManage()
+const goodsManage = GoodsManage();
+const orderManage = ordersManage()
+const userManage = UserManage()
 // 订单状态类型定义
 type OrderStatus = '待付款' | '已付款' | '已发货' | '已完成' | '已取消';
 
@@ -356,18 +361,18 @@ const resetSearch = () => {
 
 // 加载表格数据
 const loadordersData = () => {
-  if (orderMange.orders.length > 0) {
-    orderData.value = orderMange.orders;
-    total.value = orderMange.orders.length;
+  if (orderManage.orders.length > 0) {
+    orderData.value = orderManage.orders;
+    total.value = orderManage.orders.length;
     return;
   } else {
     // 确保商品数据已加载
-    if (goodsMange.goods.length === 0) {
-      goodsMange.getGoods(128);
+    if (goodsManage.goods.length === 0) {
+      goodsManage.getGoods(128);
     }
     // 生成模拟订单数据
-    orderMange.getOrders(50)
-    orderData.value = orderMange.orders;
+    orderManage.getOrders(50)
+    orderData.value = orderManage.orders;
     total.value = orderData.value.length;
   }
 };
@@ -491,10 +496,10 @@ const handleCancel = (row: Order) => {
       type: 'warning'
     }
   ).then(() => {
-    if (orderMange.cancelOrders(row.id)) {
+    if (orderManage.cancelOrders(row.id)) {
       const index = orderData.value.findIndex(item => item.id === row.id);
       if (index !== -1) {
-        orderData.value[index].status = '已取消';
+        orderData.value[index]!.status = '已取消';
       }
       ElMessage({
         type: 'success',
@@ -520,10 +525,10 @@ const handleShip = (row: Order) => {
       type: 'info'
     }
   ).then(() => {
-    if (orderMange.shipOrder(row.id)) {
+    if (orderManage.shipOrder(row.id)) {
       const index = orderData.value.findIndex(item => item.id === row.id);
       if (index !== -1) {
-        orderData .value[index].status = '已发货';
+        orderData .value[index]!.status = '已发货';
       }
       ElMessage({
         type: 'success',
@@ -546,7 +551,7 @@ const handleSave = () => {
       console.log(handleEditOrAdd.value);
       if (handleEditOrAdd.value === 'edit') {
         // 编辑操作
-        orderMange.editOrders(form);
+        orderManage.editOrders(form);
         const index = orderData.value.findIndex(item => item.id === form.id);
         if (index !== -1) {
           orderData.value[index] = { ...form };
@@ -557,7 +562,7 @@ const handleSave = () => {
         });
       } else {
         // 新增操作
-        orderMange.addOrders(form);
+        orderManage.addOrders(form);
         ElMessage({
           type: 'success',
           message: '新增成功!'
@@ -570,7 +575,7 @@ const handleSave = () => {
 
 // 处理数量变化自动计算金额
 const handleCount = () => {
-  const selectedGoods = goodsMange.goods.find(item => item.name === form.productName);
+  const selectedGoods = goodsManage.goods.find(item => item.name === form.productName);
   if (selectedGoods) {
     form.amount = selectedGoods.price * form.quantity;
   } else {

@@ -247,11 +247,6 @@
             :http-request="handleFakeUpload"
           >
             <el-button type="primary">点击上传</el-button>
-            <template #tip>
-              <div class="el-upload__tip">
-                只能上传jpg/png文件，且不超过500kb
-              </div>
-            </template>
           </el-upload>
         </el-form-item>
       </el-form>
@@ -269,9 +264,9 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import type { UploadUserFile } from 'element-plus'
-import { GoodsMange } from '../../store/Goods';
+import { GoodsManage } from '../../store/Goods';
 
-const goodsMange = GoodsMange();
+const goodsManage = GoodsManage();
 // 搜索表单
 const searchForm = reactive({
   name: '',
@@ -358,12 +353,12 @@ const resetSearch = () => {
 
 // 加载表格数据，模拟生成商品数据
 const loadTableData = () => {
-  if(goodsMange.goods.length > 0){
-    tableData.value = goodsMange.goods;
-    total.value = goodsMange.goods.length;
+  if(goodsManage.goods.length > 0){
+    tableData.value = goodsManage.goods;
+    total.value = goodsManage.goods.length;
     return;
   } else {
-    goodsMange.getGoods(128);
+    goodsManage.getGoods(128);
     tableData.value = localStorage.getItem('goods') ? JSON.parse(localStorage.getItem('goods') || '') : [];
     total.value = tableData.value.length;
   }
@@ -459,7 +454,7 @@ const handleDelete = (row:Product) => {
     }
   ).then(() => {
     // 模拟删除操作
-    goodsMange.deleteGoodsData(row)
+    goodsManage.deleteGoodsData(row)
     tableData.value = tableData.value.filter(item => item.id !== row.id);
     total.value = tableData.value.length;
     ElMessage({
@@ -482,7 +477,7 @@ const handleSave = () => {
     if (valid) {
       if (handleEditOrAdd.value === 'edit') {
         // 编辑操作
-        goodsMange.editGoodsData(form)
+        goodsManage.editGoodsData(form)
         const index = tableData.value.findIndex(item => item.id === form.id);
         if (index !== -1) {
           tableData.value[index] = { 
@@ -492,7 +487,7 @@ const handleSave = () => {
         }
       } else if(handleEditOrAdd.value === 'add') {
         // 新增操作
-        goodsMange.addGoodsData(form)
+        goodsManage.addGoodsData(form)
       }
       dialogVisible.value = false;
     }
