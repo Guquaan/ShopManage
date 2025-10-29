@@ -122,7 +122,7 @@
       ref="formRef"
     >
       <el-form-item label="用户ID" prop="id">
-        <el-input v-model="form.id" type="number" />
+        <el-input v-model="form.id" />
       </el-form-item>
       <el-form-item label="用户名" prop="username">
         <el-input v-model="form.username" />
@@ -234,7 +234,6 @@ const handleAreaChange = (value: string[]) => {
 const rules = reactive({
   id: [
     { required: true, message: '请输入用户ID', trigger: 'blur' },
-    { type: 'number', message: '用户ID必须为数字', trigger: 'blur' }
   ],
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -362,14 +361,12 @@ const handleEdit = (row: User) => {
   // 解析地址为级联选择值
   selectedArea.value = row.address.split('-').map((item: string) => item.trim());
   dialogVisible.value = true;
-  console.log(selectedArea.value);
 };
 
 // 处理更改用户状态
 const handleChangeStatus = (row: User) => {
   const newStatus = row.status === '正常' ? '禁用' : '正常';
   const message = row.status === '正常' ? '禁用' : '启用';
-  
   ElMessageBox.confirm(
     `确定要${message}用户 "${row.username}" 吗？`,
     '状态确认',

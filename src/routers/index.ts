@@ -5,6 +5,9 @@ import GoodsMange from '../view/Component/GoodsMange.vue'
 import GoodsHouse from '../view/Component/GoodsHouse.vue'
 import GoodsOrder from '../view/Component/GoodsOrder.vue'
 import UserMange from '../view/Component/UserMange.vue'
+import MerchantMessage from '../view/Component/MerchantMessage.vue'
+import SalesReport from '../view/Component/SalesReport.vue'
+import component from 'element-plus/es/components/tree-select/src/tree-select-option.mjs'
 const routes: any = [
     {
         path:'/',
@@ -29,6 +32,16 @@ const routes: any = [
                 path:'/usermange',
                 component:UserMange,
                 meta:{name:'用户列表'}
+            },
+            {
+                path:'/merchantmessage',
+                component:MerchantMessage,
+                meta:{name:'商家信息'}
+            },
+            {
+                path:'/salesreport',
+                component:SalesReport,
+                meta:{name:'销售报表'}
             }
         ]
     },

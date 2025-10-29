@@ -64,10 +64,7 @@ export const UserManage = defineStore('user', {
 
     // 添加用户
     addUser(user: User) {
-      const id = this.users.length > 0 
-        ? Math.max(...this.users.map(u => u.id)) + 1 
-        : 1;
-      
+      const id = user.id
       const newUser: User = {
         ...user,
         id,

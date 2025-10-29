@@ -129,10 +129,6 @@ const increaseStock = (goods: any) => {
   goodsStore.updateGoodsStock(goods as Product);
 };
 
-
-
-
-
 // 筛选商品
 const filteredGoods = computed(() => {
   return goodsStore.goods.filter((goods: any) => {

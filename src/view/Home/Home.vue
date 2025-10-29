@@ -82,7 +82,7 @@
                 <span>用户管理</span>
               </template>
               <el-menu-item index="2-1" @click="setBreadcrumb(['用户管理', '用户列表'])">用户列表</el-menu-item>
-              <el-menu-item index="2-2" @click="setBreadcrumb(['用户管理', '权限设置'])">权限设置</el-menu-item>
+              <el-menu-item index="2-2" @click="setBreadcrumb(['用户管理', '商家信息'])">商家信息</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
