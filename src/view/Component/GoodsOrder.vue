@@ -371,7 +371,7 @@ const loadordersData = () => {
       goodsManage.getGoods(128);
     }
     // 生成模拟订单数据
-    orderManage.getOrders(50)
+    orderManage.getOrders(20)
     orderData.value = orderManage.orders;
     total.value = orderData.value.length;
   }

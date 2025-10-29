@@ -55,7 +55,8 @@
               <p class="stat-label">平均客单价</p>
               <h3 class="stat-value">¥{{ avgOrderValue.toFixed(2) }}</h3>
               <p class="stat-change" :class="avgChange > 0 ? 'positive' : 'negative'">
-                <el-icon>{{ avgChange > 0 ? '<ArrowUp />' : '<ArrowDown />' }}</el-icon>
+                <el-icon v-if="avgChange > 0"><ArrowUp/></el-icon>
+                <el-icon v-else ><ArrowDown /></el-icon>
                 {{ Math.abs(avgChange).toFixed(2) }}% 较上期
               </p>
             </div>
@@ -137,8 +138,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, reactive } from 'vue';
-import { ArrowUp, ArrowDown, Money, Document,   } from '@element-plus/icons-vue';
+import { ref, computed, onMounted, } from 'vue';
+import { ArrowUp, ArrowDown, Money, Document} from '@element-plus/icons-vue';
 import { ordersManage } from '../../store/Order';
 import { GoodsManage } from '../../store/Goods';
 import ElChart from 'element-plus';

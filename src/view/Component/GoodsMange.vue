@@ -358,7 +358,7 @@ const loadTableData = () => {
     total.value = goodsManage.goods.length;
     return;
   } else {
-    goodsManage.getGoods(128);
+    goodsManage.getGoods(20);
     tableData.value = localStorage.getItem('goods') ? JSON.parse(localStorage.getItem('goods') || '') : [];
     total.value = tableData.value.length;
   }

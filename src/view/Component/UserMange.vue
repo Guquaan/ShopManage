@@ -282,7 +282,7 @@ const loadUserData = () => {
     return;
   } else {
     // 生成模拟用户数据
-    userManage.getUsers(50)
+    userManage.getUsers(10)
     userData.value = userManage.users;
     total.value = userData.value.length;
   }

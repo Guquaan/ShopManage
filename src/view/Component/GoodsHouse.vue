@@ -1,10 +1,5 @@
 <template>
   <div class="warehouse-view">
-    <div class="page-header">
-      <el-button type="primary" @click="navToManagement">
-        <el-icon><Setting /></el-icon> 商品管理
-      </el-button>
-    </div>
     <el-card class="filter-card">
       <el-row :gutter="20">
         <el-col :span="12">
@@ -85,8 +80,7 @@
 
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
-import { Setting, Plus, Search, Minus } from '@element-plus/icons-vue';
+import {  Plus, Search, Minus } from '@element-plus/icons-vue';
 import { GoodsManage } from '../../store/Goods';
 
 interface Product {
@@ -111,6 +105,7 @@ const loadGoodsData = () => {
   if (goodsStore.goods.length === 0) {
     // 如果没有数据，初始化一些示例数据
     goodsStore.getGoods(20);
+    location.reload();
   }
 };
 
@@ -137,15 +132,6 @@ const filteredGoods = computed(() => {
     return matchesName && matchesCategory;
   });
 });
-
-// 导航到管理页面
-const navToManagement = () => {
-  ElMessage({
-    type: 'info',
-    message: '导航到商品管理页面'
-  });
-};
-
 // 页面加载时初始化数据
 onMounted(() => {
   loadGoodsData();
@@ -157,13 +143,6 @@ onMounted(() => {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
 }
 
 .filter-card {

@@ -1,81 +1,61 @@
 import { defineStore } from 'pinia'
 import { ElMessage } from 'element-plus'
-
+import buslic from '../data/photo/营业执照.png'
 // 商家信息接口定义
 export interface Merchant {
-  id: number;
   name: string;
   address: string;
   contactPerson: string;
   phone: string;
   email: string;
-  businessLicense: string; // 营业执照图片路径
-  status: '正常' | '停业' | '审核中';
-  createTime: string;
+  businessLicense: string; 
   updateTime: string;
 }
 
 export const MerchantManage = defineStore('merchantmanage', {
-  state: (): { currentMerchant: Merchant | null } => ({
-    currentMerchant: localStorage.getItem('currentMerchant') 
-      ? JSON.parse(localStorage.getItem('currentMerchant')!) 
+  state: (): { merchant: Merchant | null } => ({
+    merchant: localStorage.getItem('merchant') 
+      ? JSON.parse(localStorage.getItem('merchant')!) 
       : null
   }),
 
   actions: {
     getMerchant() {
-      if (!this.currentMerchant) {
+      if (!this.merchant) {
         const defaultMerchant: Merchant = {
-          id: 1001,
           name: '默认商家',
-          address: '北京市朝阳区测试街道100号',
+          address: '广东省梅州市梅县区',
           contactPerson: '张三',
           phone: '13800138000',
           email: 'merchant@example.com',
-          businessLicense: '/src/assets/license-default.png',
-          status: '正常',
-          createTime: new Date().toLocaleString(),
+          businessLicense: buslic,
           updateTime: new Date().toLocaleString()
         }
-        
-        this.currentMerchant = defaultMerchant
-        localStorage.setItem('currentMerchant', JSON.stringify(defaultMerchant))
+        this.merchant = defaultMerchant
+        localStorage.setItem('merchant', JSON.stringify(defaultMerchant))
       }
     },
 
     // 更新商家信息
     updateMerchantInfo(merchant: Partial<Merchant>) {
-      if (!this.currentMerchant) {
+      if (!this.merchant) {
         ElMessage({
           type: 'error',
           message: '商家信息不存在，请先初始化！'
         })
         return false
       }
-      
-      this.currentMerchant = {
-        ...this.currentMerchant,
+      this.merchant = {
+        ...this.merchant,
         ...merchant,
         updateTime: new Date().toLocaleString()
       }
-      
-      localStorage.setItem('currentMerchant', JSON.stringify(this.currentMerchant))
-      
+      localStorage.setItem('merchant', JSON.stringify(this.merchant))
       ElMessage({
         type: 'success',
         message: '商家信息更新成功！'
       })
-      
       return true
     },
-
-    // 更新商家状态
-    updateMerchantStatus(status: '正常' | '停业' | '审核中') {
-      if (!this.currentMerchant) return false
-      this.currentMerchant.status = status
-      this.currentMerchant.updateTime = new Date().toLocaleString()
-      localStorage.setItem('currentMerchant', JSON.stringify(this.currentMerchant))
-      return true
-    }
   }
 })

@@ -7,7 +7,6 @@ import GoodsOrder from '../view/Component/GoodsOrder.vue'
 import UserMange from '../view/Component/UserMange.vue'
 import MerchantMessage from '../view/Component/MerchantMessage.vue'
 import SalesReport from '../view/Component/SalesReport.vue'
-import component from 'element-plus/es/components/tree-select/src/tree-select-option.mjs'
 const routes: any = [
     {
         path:'/',

@@ -6,7 +6,7 @@ import { getRandomFourDigits } from '../data/Random';
 type OrderStatus = '待付款' | '已付款' | '已发货' | '已完成' | '已取消';
 // 订单接口定义
 interface Order {
-    id: number;
+    id: number;    
     orderNo: string;
     productName: string;
     productImage?: string;
@@ -40,7 +40,7 @@ export const ordersManage = defineStore('ordersmanage', {
                     : null;
                 const quantity = Math.floor(Math.random() * 10) + 1;
                 const price = randomGoods ?  randomGoods.price : 100
-                if(!userStore.users.length) userStore.getUsers(50)
+                if(!userStore.users.length) userStore.getUsers(10)
                 const custom = userStore.users.length
                     ? userStore.users[Math.floor(Math.random() * userStore.users.length)]!.username 
                     : ''
