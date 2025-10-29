@@ -1,200 +1,58 @@
 <template>
-  <div class="sales-report">
-    <div class="page-header">
-      <h2>销售报表分析</h2>
-      <el-date-picker
-        v-model="dateRange"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        @change="handleDateChange"
-      />
+  <div class="sales-report-charts">
+    <div class="chart-container">
+      <h3>销售额趋势分析</h3>
+      <div ref="trendChart" class="chart-box"></div>
     </div>
-
-    <!-- 核心指标卡片 -->
-    <el-row :gutter="20" class="stats-row">
-      <el-col :span="6">
-        <el-card class="stat-card" :body-style="{ padding: '15px' }">
-          <div class="stat-content">
-            <div class="stat-info">
-              <p class="stat-label">总销售额</p>
-              <h3 class="stat-value">¥{{ totalSales.toFixed(2) }}</h3>
-              <p class="stat-change" :class="salesChange > 0 ? 'positive' : 'negative'">
-                <el-icon>{{ salesChange > 0 ? '<ArrowUp />' : '<ArrowDown />' }}</el-icon>
-                {{ Math.abs(salesChange).toFixed(2) }}% 较上期
-              </p>
-            </div>
-            <div class="stat-icon sales-icon">
-              <el-icon><Money /></el-icon>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card" :body-style="{ padding: '15px' }">
-          <div class="stat-content">
-            <div class="stat-info">
-              <p class="stat-label">订单总数</p>
-              <h3 class="stat-value">{{ totalOrders }}</h3>
-              <p class="stat-change" :class="ordersChange > 0 ? 'positive' : 'negative'">
-                <el-icon>{{ ordersChange > 0 ? '<ArrowUp />' : '<ArrowDown />' }}</el-icon>
-                {{ Math.abs(ordersChange).toFixed(2) }}% 较上期
-              </p>
-            </div>
-            <div class="stat-icon order-icon">
-              <el-icon><Document /></el-icon>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card" :body-style="{ padding: '15px' }">
-          <div class="stat-content">
-            <div class="stat-info">
-              <p class="stat-label">平均客单价</p>
-              <h3 class="stat-value">¥{{ avgOrderValue.toFixed(2) }}</h3>
-              <p class="stat-change" :class="avgChange > 0 ? 'positive' : 'negative'">
-                <el-icon v-if="avgChange > 0"><ArrowUp/></el-icon>
-                <el-icon v-else ><ArrowDown /></el-icon>
-                {{ Math.abs(avgChange).toFixed(2) }}% 较上期
-              </p>
-            </div>
-            <div class="stat-icon avg-icon">
-              <el-icon><Calculator /></el-icon>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card class="stat-card" :body-style="{ padding: '15px' }">
-          <div class="stat-content">
-            <div class="stat-info">
-              <p class="stat-label">热销商品数</p>
-              <h3 class="stat-value">{{ hotSellingCount }}</h3>
-              <p class="stat-label">销量 > 100</p>
-            </div>
-            <div class="stat-icon hot-icon">
-              <el-icon><Fire /></el-icon>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-
-    <!-- 图表区域 -->
-    <el-row :gutter="20" class="charts-row">
-      <el-col :span="12">
-        <el-card class="chart-card">
-          <div slot="header">销售额趋势</div>
-          <div class="chart-container">
-            <el-chart :option="salesTrendOption" />
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card class="chart-card">
-          <div slot="header">商品类别销售占比</div>
-          <div class="chart-container">
-            <el-chart :option="categoryPieOption" />
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-
-    <!-- 热销商品列表 -->
-    <el-card class="table-card">
-      <div slot="header">热销商品TOP10</div>
-      <el-table
-        :data="topSellingGoods"
-        border
-        stripe
-        :header-cell-style="{ background: '#f8fafc' }"
-      >
-        <el-table-column type="index" label="排名" width="80" align="center" />
-        <el-table-column prop="name" label="商品名称" min-width="180">
-          <template #default="scope">
-            <div class="product-info">
-              <img :src="scope.row.image" alt="商品图片" class="product-image" />
-              <span class="product-name">{{ scope.row.name }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="category" label="分类" width="120" align="center" />
-        <el-table-column prop="sales" label="销量" width="100" align="center" />
-        <el-table-column prop="revenue" label="销售额" width="120" align="center">
-          <template #default="scope">
-            ¥{{ scope.row.revenue.toFixed(2) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="percentage" label="占比" width="100" align="center">
-          <template #default="scope">
-            {{ scope.row.percentage.toFixed(2) }}%
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-card>
+    <div class="chart-container">
+      <h3>商品类别销售占比</h3>
+      <div ref="categoryChart" class="chart-box"></div>
+    </div>
+    
+    <div class="chart-container">
+      <h3>热销商品TOP10</h3>
+      <div ref="topProductsChart" class="chart-box"></div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, } from 'vue';
-import { ArrowUp, ArrowDown, Money, Document} from '@element-plus/icons-vue';
+import { ref, onMounted, computed } from 'vue';
+import * as echarts from 'echarts';
+import type { ECharts } from 'echarts';
 import { ordersManage } from '../../store/Order';
 import { GoodsManage } from '../../store/Goods';
-import ElChart from 'element-plus';
-import type { EChartsOption } from 'echarts';
 
 // 状态管理
-const orderStore = ordersManage();
-const goodsStore = GoodsManage();
+const ordersmanege = ordersManage();
+const goodsmange = GoodsManage();
+// 图表实例引用
+const trendChart = ref<HTMLElement | null>(null);
+const categoryChart = ref<HTMLElement | null>(null);
+const topProductsChart = ref<HTMLElement | null>(null);
+// 图表对象
+let trendChartInstance: ECharts | null = null;
+let categoryChartInstance: ECharts | null = null;
+let topProductsChartInstance: ECharts | null = null;
 
 // 日期范围选择
 const dateRange = ref<[Date, Date] | null>(null);
 
-// 初始化数据
-const initData = () => {
-  // 确保有数据
-  if (goodsStore.goods.length === 0) {
-    goodsStore.getGoods(128);
-  }
-  if (orderStore.orders.length === 0) {
-    orderStore.getOrders(50);
-  }
-};
-
 // 过滤后的订单数据
 const filteredOrders = computed(() => {
-  if (!dateRange.value) return orderStore.orders;
+  if (!dateRange.value) return ordersmanege.orders;
   const [start, end] = dateRange.value;
   const startDate = new Date(start);
   const endDate = new Date(end);
   endDate.setHours(23, 59, 59, 999);
-  return orderStore.orders.filter(order => {
+  return ordersmanege.orders.filter(order => {
     const orderDate = new Date(order.createTime);
     return orderDate >= startDate && orderDate <= endDate;
   });
 });
 
-// 计算核心指标
-const totalSales = computed(() => {
-  return filteredOrders.value.reduce((sum, order) => {
-    return ['已付款', '已发货', '已完成'].includes(order.status) 
-      ? sum + order.amount 
-      : sum;
-  }, 0);
-});
-
-const totalOrders = computed(() => filteredOrders.value.length);
-
-const avgOrderValue = computed(() => {
-  if (totalOrders.value === 0) return 0;
-  return totalSales.value / totalOrders.value;
-});
-
-// 热销商品统计
+// 商品销售数据
 const productSalesData = computed(() => {
-  // 按商品名称统计销量和销售额
   const salesMap: Record<string, { quantity: number; revenue: number }> = {};
   filteredOrders.value.forEach(order => {
     if (!['已付款', '已发货', '已完成'].includes(order.status)) return;
@@ -204,9 +62,9 @@ const productSalesData = computed(() => {
     salesMap[order.productName]!.quantity += order.quantity;
     salesMap[order.productName]!.revenue += order.amount;
   });
-  // 转换为数组并关联商品信息
+
   return Object.entries(salesMap).map(([name, data]) => {
-    const product = goodsStore.goods.find(g => g.name === name);
+    const product = goodsmange.goods.find(g => g.name === name);
     return {
       ...product,
       sales: data.quantity,
@@ -216,28 +74,52 @@ const productSalesData = computed(() => {
   }).sort((a, b) => b.sales - a.sales);
 });
 
-const topSellingGoods = computed(() => productSalesData.value.slice(0, 10));
-const hotSellingCount = computed(() => productSalesData.value.filter(item => item.sales > 100).length);
+// 总销售额
+const totalSales = computed(() => {
+  return filteredOrders.value.reduce((sum, order) => {
+    return ['已付款', '已发货', '已完成'].includes(order.status) 
+      ? sum + order.amount 
+      : sum;
+  }, 0);
+});
 
-// 趋势分析（简化版，实际项目中可能需要更复杂的时间维度处理）
-const salesTrendOption = computed<EChartsOption>(() => {
+// 初始化趋势图表
+const initTrendChart = () => {
+  if (!trendChart.value) return;
+  // 销毁已有实例
+  if (trendChartInstance) {
+    trendChartInstance.dispose();
+  }
+  // 创建新实例
+  trendChartInstance = echarts.init(trendChart.value);
   // 按日期分组统计销售额
   const dateMap: Record<string, number> = {};
-  
   filteredOrders.value.forEach(order => {
     if (!['已付款', '已发货', '已完成'].includes(order.status)) return;
-    
     const date = new Date(order.createTime).toLocaleDateString();
     dateMap[date] = (dateMap[date] || 0) + order.amount;
   });
-  
   // 排序日期
   const dates = Object.keys(dateMap).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-  
-  return {
+  // 设置图表选项
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: '日期: {b}<br/>销售额: ¥{c}'
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
     xAxis: {
       type: 'category',
-      data: dates
+      data: dates,
+      axisLabel: {
+        rotate: 45,
+        interval: 0
+      }
     },
     yAxis: {
       type: 'value',
@@ -247,33 +129,65 @@ const salesTrendOption = computed<EChartsOption>(() => {
     },
     series: [
       {
-        data: dates.map(date => dateMap[date]),
+        name: '销售额',
         type: 'line',
         smooth: true,
+        data: dates.map(date => dateMap[date]),
         itemStyle: { color: '#3b82f6' },
-        lineStyle: { color: '#3b82f6' }
+        lineStyle: { color: '#3b82f6' },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+            { offset: 1, color: 'rgba(59, 130, 246, 0)' }
+          ])
+        }
       }
     ]
   };
-});
+  
+  // 设置图表选项
+  trendChartInstance.setOption(option);
+  // 响应窗口大小变化
+  window.addEventListener('resize', () => {
+    trendChartInstance?.resize();
+  });
+};
 
-// 类别占比分析
-const categoryPieOption = computed<EChartsOption>(() => {
+// 初始化类别占比图表
+const initCategoryChart = () => {
+  if (!categoryChart.value) return;
+  
+  // 销毁已有实例
+  if (categoryChartInstance) {
+    categoryChartInstance.dispose();
+  }
+  
+  // 创建新实例
+  categoryChartInstance = echarts.init(categoryChart.value);
+  
   // 按类别统计销售额
   const categoryMap: Record<string, number> = {};
-  
   productSalesData.value.forEach(product => {
     if (!product.category) return;
     categoryMap[product.category] = (categoryMap[product.category] || 0) + product.revenue;
   });
   
-  return {
+  // 准备数据
+  const data = Object.entries(categoryMap).map(([name, value]) => ({
+    name,
+    value
+  }));
+  
+  // 设置图表选项
+  const option = {
     tooltip: {
-      trigger: 'item'
+      trigger: 'item',
+      formatter: '{a} <br/>{b}: ¥{c} ({d}%)'
     },
     legend: {
       orient: 'vertical',
-      left: 10
+      left: 10,
+      top: 'center'
     },
     series: [
       {
@@ -300,155 +214,131 @@ const categoryPieOption = computed<EChartsOption>(() => {
         labelLine: {
           show: false
         },
-        data: Object.entries(categoryMap).map(([name, value]) => ({
-          name,
-          value,
-          label: { show: true }
-        }))
+        data: data
       }
     ]
   };
-});
+  
+  // 设置图表选项
+  categoryChartInstance.setOption(option);
+  
+  // 响应窗口大小变化
+  window.addEventListener('resize', () => {
+    categoryChartInstance?.resize();
+  });
+};
 
-// 同比变化（简化计算，实际项目中需要对比上期同期数据）
-const salesChange = ref(5.8);
-const ordersChange = ref(-2.3);
-const avgChange = ref(8.1);
-
-// 日期范围变化处理
-const handleDateChange = () => {
-  // 实际项目中可以在这里重新计算同比变化
+// 初始化TOP10商品图表
+const initTopProductsChart = () => {
+  if (!topProductsChart.value) return;
+  
+  // 销毁已有实例
+  if (topProductsChartInstance) {
+    topProductsChartInstance.dispose();
+  }
+  // 创建新实例
+  topProductsChartInstance = echarts.init(topProductsChart.value);
+  // 获取TOP10商品
+  const topProducts = productSalesData.value.slice(0, 10).reverse();
+  // 设置图表选项
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
+      formatter: '商品: {b}<br/>销售额: ¥{c}'
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '¥{value}'
+      }
+    },
+    yAxis: {
+      type: 'category',
+      data: topProducts.map(item => item.name),
+      axisLabel: {
+        interval: 0,
+        rotate: 0
+      }
+    },
+    series: [
+      {
+        name: '销售额',
+        type: 'bar',
+        data: topProducts.map(item => item.revenue),
+        itemStyle: {
+          color: function(params:any) {
+            // 渐变颜色
+            const colorList = ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe', '#eff6ff'];
+            return colorList[params.dataIndex % colorList.length];
+          }
+        },
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '¥{c}'
+        }
+      }
+    ]
+  };
+  // 设置图表选项
+  topProductsChartInstance.setOption(option);
+  
+  // 响应窗口大小变化
+  window.addEventListener('resize', () => {
+    topProductsChartInstance?.resize();
+  });
 };
 
 // 页面加载时初始化
 onMounted(() => {
-  initData();
+  setTimeout(() => {
+    initTrendChart();
+    initCategoryChart();
+    initTopProductsChart();
+  }, 1000);
 });
 </script>
 
 <style lang="css" scoped>
-.sales-report {
+.sales-report-charts {
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.stats-row {
-  margin-bottom: 20px;
-}
-
-.charts-row {
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.stat-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #64748b;
-  margin: 0 0 5px 0;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 5px 0;
-}
-
-.stat-change {
-  font-size: 12px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.positive {
-  color: #10b981;
-}
-
-.negative {
-  color: #ef4444;
-}
-
-.stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-}
-
-.sales-icon {
-  background-color: #fee2e2;
-  color: #ef4444;
-}
-
-.order-icon {
-  background-color: #dbeafe;
-  color: #3b82f6;
-}
-
-.avg-icon {
-  background-color: #dcfce7;
-  color: #22c55e;
-}
-
-.hot-icon {
-  background-color: #fef3c7;
-  color: #f59e0b;
-}
-
-.chart-card {
-  height: 350px;
-}
-
 .chart-container {
+  margin-bottom: 30px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  padding: 16px;
+}
+
+.chart-container h3 {
+  margin: 0 0 16px 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.chart-box {
   width: 100%;
-  height: calc(100% - 40px);
+  height: 400px;
 }
 
-.table-card {
-  margin-top: 20px;
-}
-
-.product-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.product-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  object-fit: cover;
-}
-
-.product-name {
-  line-height: 1.5;
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .chart-box {
+    height: 300px;
+  }
 }
 </style>

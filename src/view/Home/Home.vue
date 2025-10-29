@@ -17,7 +17,6 @@
       </div>
       <!-- 面包屑功能实现 -->
       <div class="header-right">
-        
         <!-- 登陆控制 -->
         <div class="user-info">
           <el-dropdown>
@@ -103,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref ,onMounted } from 'vue';
+import { ref ,onMounted} from 'vue';
 import { 
   Fold, 
   Expand, 
@@ -124,13 +123,11 @@ const isSidebarCollapsed = ref(false);
 const sidebarWidth = ref('220px');
 // 面包屑数据
 const breadcrumbItems = ref<string[]>(['商品管理']);
-const currentTitle = ref(['首页']);
 // 切换侧边栏
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
   sidebarWidth.value = isSidebarCollapsed.value ? '64px' : '220px';
 };
-
 // 利用面包屑进行路由的跳转
 const setBreadcrumb = (items: string[]) => {
   const targetName = items[items.length - 1];
@@ -148,7 +145,6 @@ const setBreadcrumb = (items: string[]) => {
   };
   const pathRoute = findRoute(router.getRoutes());
   breadcrumbItems.value = items;
-  currentTitle.value = items;
   // 只有找到有效路由时才跳转
   if (pathRoute?.path) {
     router.push(pathRoute.path);
@@ -171,7 +167,7 @@ onMounted(()=>{
   // }
 })
 // 在进行选择的时候保存index到localStorage上面
-const handleSelect = (key : any, keyPath:any) => {
+const handleSelect = () => {
   // // 实时更新高亮效果
   // active.value = key 
   // // 保存index到浏览器上
@@ -305,6 +301,4 @@ const Layout = () => {
   padding: 20px;
   overflow-y: auto;
 }
-
-
 </style>
