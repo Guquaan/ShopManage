@@ -17,12 +17,6 @@
       </div>
       <!-- 面包屑功能实现 -->
       <div class="header-right">
-        <el-breadcrumb separator="/" class="breadcrumb">
-          <el-breadcrumb-item>首页</el-breadcrumb-item>
-          <el-breadcrumb-item v-for="(item, index) in breadcrumbItems" :key="index" :to="toPath(item)">
-            {{ item }}
-          </el-breadcrumb-item>
-        </el-breadcrumb>
         
         <!-- 登陆控制 -->
         <div class="user-info">
@@ -121,13 +115,10 @@ import {
   ShoppingTrolley,
   Coin
 } from '@element-plus/icons-vue';
-import { useRouter,useRoute } from 'vue-router';
+import { useRouter} from 'vue-router';
 import { useLoginManage} from '../../store/Login'
 import { ElMessage } from 'element-plus';
-;
-
 const router = useRouter();
-const route = useRoute();
 // 侧边栏状态
 const isSidebarCollapsed = ref(false);
 const sidebarWidth = ref('220px');
@@ -155,21 +146,13 @@ const setBreadcrumb = (items: string[]) => {
     }
     return null;
   };
-  
   const pathRoute = findRoute(router.getRoutes());
   breadcrumbItems.value = items;
   currentTitle.value = items;
-  
   // 只有找到有效路由时才跳转
   if (pathRoute?.path) {
     router.push(pathRoute.path);
   } 
-};
-
-// 设置面包屑点击的跳转
-const toPath = (items:string) => {
-  const pathRoute = route.matched.find(item => item.meta.name === items[items.length - 1] || '');
-  return { path: pathRoute?.path || '' };
 };
 
 // 实现侧边栏的高亮效果
@@ -255,11 +238,6 @@ const Layout = () => {
   align-items: center;
   gap: 20px;
 }
-
-.breadcrumb {
-  font-size: 14px;
-}
-
 .user-info {
   display: flex;
   align-items: center;
