@@ -17,6 +17,8 @@ import home3 from './../data/photo/家具3.png'
 import home4 from './../data/photo/家具4.png'
 import { ElMessage } from 'element-plus'
 import { getRandomFourDigits } from '../data/Random'
+import { ordersManage } from './Order'
+import { UserManage } from './User'
 // 表格数据
 interface Product {
     id: number;
@@ -70,6 +72,8 @@ export const GoodsManage = defineStore('goodsmange', {
                     updateTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toLocaleString()
                 };
             });
+            ordersManage().getOrders(20)
+            UserManage().getUsers(10)
             localStorage.setItem('goods', JSON.stringify(goods))
         },
 

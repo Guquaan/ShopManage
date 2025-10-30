@@ -7,7 +7,7 @@
         <el-card class="chart-card">
           <div slot="header">销售额趋势</div>
           <div class="chart-container">
-            <el-chart :option="salesTrendOption" />
+            <div ref="salesTrendChart" class="chart" />
           </div>
         </el-card>
       </el-col>
@@ -17,7 +17,7 @@
         <el-card class="chart-card">
           <div slot="header">商品类别销售占比</div>
           <div class="chart-container">
-            <el-chart :option="categoryPieOption" />
+            <div ref="categoryPieChart" class="chart" />
           </div>
         </el-card>
       </el-col>
@@ -29,7 +29,7 @@
         <el-card class="chart-card">
           <div slot="header">用户购买分布</div>
           <div class="chart-container">
-            <el-chart :option="userPurchaseOption" />
+            <div ref="userPurchaseChart" class="chart" />
           </div>
         </el-card>
       </el-col>
@@ -39,7 +39,7 @@
         <el-card class="chart-card">
           <div slot="header">订单状态分布</div>
           <div class="chart-container">
-            <el-chart :option="orderStatusOption" />
+            <div ref="orderStatusChart" class="chart" />
           </div>
         </el-card>
       </el-col>
@@ -52,13 +52,23 @@ import { ref, computed, onMounted } from 'vue';
 import { ordersManage } from '../../store/Order';
 import { GoodsManage } from '../../store/Goods';
 import { UserManage } from '../../store/User';
-import ElChart from 'element-plus';
+import * as echarts from 'echarts';
+import type { ECharts } from 'echarts';
 import type { EChartsOption } from 'echarts';
 
 // 状态管理
 const orderStore = ordersManage();
 const goodsStore = GoodsManage();
 const userStore = UserManage();
+
+const salesTrendChart = ref<HTMLElement | null>(null);
+const categoryPieChart = ref<HTMLElement | null>(null);
+const userPurchaseChart = ref<HTMLElement | null>(null);
+const orderStatusChart = ref<HTMLElement | null>(null);
+let salesTrendChartInstance: ECharts | null = null;
+let categoryPieChartInstance: ECharts | null = null;
+let userPurchaseChartInstance: ECharts | null = null;
+let orderStatusChartInstance: ECharts | null = null;
 
 // 日期范围选择
 const dateRange = ref<[Date, Date] | null>(null);
@@ -125,16 +135,20 @@ const userPurchaseData = computed(() => {
   }).sort((a, b) => b.totalSpent - a.totalSpent);
 });
 // 销售额趋势图
-const salesTrendOption = computed<EChartsOption>(() => {
+const salesTrendOption = () => {
+  if (!salesTrendChart.value) return {};
+  if (salesTrendChartInstance) {
+    salesTrendChartInstance.dispose()
+  }
+  salesTrendChartInstance = echarts.init(salesTrendChart.value);
   const dateMap: Record<string, number> = {};
   filteredOrders.value.forEach(order => {
     if (!['已付款', '已发货', '已完成'].includes(order.status)) return;
-    
     const date = new Date(order.createTime).toLocaleDateString();
     dateMap[date] = (dateMap[date] || 0) + order.amount;
   });
   const dates = Object.keys(dateMap).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-  return {
+  const options =  {
     xAxis: {
       type: 'category',
       data: dates
@@ -155,17 +169,24 @@ const salesTrendOption = computed<EChartsOption>(() => {
       }
     ]
   };
-});
+  // 设置图表选项
+  salesTrendChartInstance.setOption(options);
+};
 
 // 商品类别占比图
-const categoryPieOption = computed<EChartsOption>(() => {
+const categoryPieOption = () => {
+  if(!categoryPieChart.value) return {}
+  if(categoryPieChartInstance){
+    categoryPieChartInstance.dispose()
+  }
+  categoryPieChartInstance = echarts.init(categoryPieChart.value);
   const categoryMap: Record<string, number> = {};
   productSalesData.value.forEach(product => {
     if (!product.category) return;
     categoryMap[product.category] = (categoryMap[product.category] || 0) + product.revenue;
   });
-  return {
-    tooltip: {
+  const options = {
+    tooltip: { 
       trigger: 'item'
     },
     legend: {
@@ -204,11 +225,18 @@ const categoryPieOption = computed<EChartsOption>(() => {
       }
     ]
   };
-});
+  // 设置图表选项
+  categoryPieChartInstance.setOption(options);
+};
 // 用户购买分布图
-const userPurchaseOption = computed<EChartsOption>(() => {
+const userPurchaseOption = () => {
+  if(!userPurchaseChart.value) return {}
+  if(userPurchaseChartInstance){
+    userPurchaseChartInstance.dispose()
+  }
+  userPurchaseChartInstance = echarts.init(userPurchaseChart.value);
   const topUsers = userPurchaseData.value.slice(0, 8);
-  return {
+  const options =  {
     xAxis: {
       type: 'category',
       data: topUsers.map(u => u.username)
@@ -227,9 +255,16 @@ const userPurchaseOption = computed<EChartsOption>(() => {
       }
     ]
   };
-});
+  // 设置图表选项
+  userPurchaseChartInstance.setOption(options);
+};
 // 订单状态分布图
-const orderStatusOption = computed<EChartsOption>(() => {
+const orderStatusOption = () => {
+  if(!orderStatusChart.value) return {}
+  if(orderStatusChartInstance){
+    orderStatusChartInstance.dispose()
+  }
+  orderStatusChartInstance = echarts.init(orderStatusChart.value);
   const statusMap: Record<string, number> = {
     '待付款': 0,
     '已付款': 0,
@@ -241,7 +276,7 @@ const orderStatusOption = computed<EChartsOption>(() => {
   filteredOrders.value.forEach(order => {
     statusMap[order.status]!++;
   })
-  return {
+  const options = {
     tooltip: {
       trigger: 'item'
     },
@@ -257,10 +292,17 @@ const orderStatusOption = computed<EChartsOption>(() => {
       }
     ]
   };
-});
+  // 设置图表选项
+  orderStatusChartInstance.setOption(options);
+};
 // 页面加载时初始化
 onMounted(() => {
-  
+  setTimeout(() => {
+    salesTrendOption()
+    categoryPieOption()
+    userPurchaseOption()
+    orderStatusOption()
+  }, 500);
 });
 </script>
 
@@ -299,5 +341,15 @@ onMounted(() => {
 
 .product-name {
   line-height: 1.5;
+}
+.charts-row{
+  margin-bottom: 3vh;
+}
+.chart{
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 100%;
+  height: 50%;
 }
 </style>

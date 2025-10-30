@@ -29,8 +29,6 @@
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>个人中心</el-dropdown-item>
-                <el-dropdown-item>设置</el-dropdown-item>
                 <el-dropdown-item divided @click="Layout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -151,11 +149,15 @@ const setBreadcrumb = (items: string[]) => {
 };
 
 // 实现侧边栏的高亮效果
-const active = ref('')
+const active = ref('1-1')
 onMounted(()=>{
-    if (router.currentRoute.value.path !== '/goodsmange') {
+  if (router.currentRoute.value.path !== '/goodsmange') {
     localStorage.setItem('active','1-1')
     router.push('/goodsmange') 
+    return
+  } else{
+    active.value = '1-1'
+    localStorage.setItem('active','1-1')
   }
   const saveIndex = localStorage.getItem('active')
   if(saveIndex){

@@ -108,7 +108,7 @@ const handlevalidata = () => {
 }
 
 //账号校验规则
-const validateUser = (value: any, callback: any) => {
+const validateUser = (_:any,value: any, callback: any) => {
     //不能为空
     if (value === '') {
         callback(new Error('请输入账号'))
@@ -119,7 +119,7 @@ const validateUser = (value: any, callback: any) => {
 }
 
 //密码校验
-const validatePass = (value: any, callback: any) => {
+const validatePass = (_:any,value: any, callback: any) => {
     //不能为空
     if (value === '') {
         callback(new Error('请输入密码'))

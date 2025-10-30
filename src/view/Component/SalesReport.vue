@@ -144,7 +144,6 @@ const initTrendChart = () => {
       }
     ]
   };
-  
   // 设置图表选项
   trendChartInstance.setOption(option);
   // 响应窗口大小变化
