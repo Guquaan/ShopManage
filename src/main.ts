@@ -10,7 +10,7 @@ const app = createApp(App)
 const pinia = createPinia()
 
 // 路由守卫
-router.beforeEach((to:any,from:any,next:any)=>{
+router.beforeEach((to:any,_:any,next:any)=>{
     const token = localStorage.getItem('Logintoken')
     if(!token && to.path !== '/login'){
         next('/login')

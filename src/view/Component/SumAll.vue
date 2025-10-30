@@ -48,13 +48,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { ordersManage } from '../../store/Order';
 import { GoodsManage } from '../../store/Goods';
 import { UserManage } from '../../store/User';
 import * as echarts from 'echarts';
 import type { ECharts } from 'echarts';
-import type { EChartsOption } from 'echarts';
 
 // 状态管理
 const orderStore = ordersManage();
@@ -72,7 +71,12 @@ let orderStatusChartInstance: ECharts | null = null;
 
 // 日期范围选择
 const dateRange = ref<[Date, Date] | null>(null);
-
+function resizeAllCharts() {
+  salesTrendChartInstance?.resize();
+  categoryPieChartInstance?.resize();
+  userPurchaseChartInstance?.resize();
+  orderStatusChartInstance?.resize();
+}
 // 过滤后的订单数据
 const filteredOrders = computed(() => {
   if (!dateRange.value) return orderStore.orders;
@@ -136,7 +140,7 @@ const userPurchaseData = computed(() => {
 });
 // 销售额趋势图
 const salesTrendOption = () => {
-  if (!salesTrendChart.value) return {};
+  if (!salesTrendChart.value) return ;
   if (salesTrendChartInstance) {
     salesTrendChartInstance.dispose()
   }
@@ -149,23 +153,32 @@ const salesTrendOption = () => {
   });
   const dates = Object.keys(dateMap).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
   const options =  {
+    tooltip: {
+      trigger: 'axis',
+      formatter: (params: any) => params.map((p: any) => `${p.marker} ${p.axisValue}<br/>${p.seriesName}: ￥${p.value}`).join('')
+    },
+    grid: { left: 40, right: 20, top: 20, bottom: 30 },
     xAxis: {
       type: 'category',
-      data: dates
+      data: dates,
+      axisLine: { lineStyle: { color: '#e6e6e6' } },
+      axisLabel: { color: '#666', rotate: 0 }
     },
     yAxis: {
       type: 'value',
-      axisLabel: {
-        formatter: '¥{value}'
-      }
+      axisLine: { show: false },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+      axisLabel: { formatter: '¥{value}', color: '#666' }
     },
     series: [
       {
         data: dates.map(date => dateMap[date]),
         type: 'line',
         smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
         itemStyle: { color: '#3b82f6' },
-        lineStyle: { color: '#3b82f6' }
+        lineStyle: { width: 2 }
       }
     ]
   };
@@ -230,7 +243,7 @@ const categoryPieOption = () => {
 };
 // 用户购买分布图
 const userPurchaseOption = () => {
-  if(!userPurchaseChart.value) return {}
+  if(!userPurchaseChart.value) return 
   if(userPurchaseChartInstance){
     userPurchaseChartInstance.dispose()
   }
@@ -303,23 +316,68 @@ onMounted(() => {
     userPurchaseOption()
     orderStatusOption()
   }, 500);
+  window.addEventListener('resize', resizeAllCharts);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', resizeAllCharts);
+  salesTrendChartInstance?.dispose();
+  categoryPieChartInstance?.dispose();
+  userPurchaseChartInstance?.dispose();
+  orderStatusChartInstance?.dispose();
 });
 </script>
 
 <style lang="css" scoped>
 .comprehensive-report {
   padding: 20px;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .chart-card {
-  height: 350px;
+  height: 340px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card ::v-deep(.el-card__header) {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  background: transparent;
 }
 
 .chart-container {
+  padding: 12px 20px 20px;
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.chart {
+  background-color: #fff;
+  border-radius: 6px;
   width: 100%;
-  height: calc(100% - 40px);
+  height: 100%;
+  min-height: 240px; 
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+}
+
+@media (max-width: 900px) {
+  .charts-row {
+    display: block;
+  }
+  .chart-container {
+    flex-direction: column;
+  }
+  .chart-card {
+    margin-bottom: 16px;
+    height: auto;
+  }
 }
 
 .table-card {
@@ -331,25 +389,16 @@ onMounted(() => {
   align-items: center;
   gap: 10px;
 }
-
 .product-image {
   width: 40px;
   height: 40px;
   border-radius: 4px;
   object-fit: cover;
 }
-
 .product-name {
-  line-height: 1.5;
+  line-height: 1.4;
 }
-.charts-row{
-  margin-bottom: 3vh;
-}
-.chart{
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  width: 100%;
-  height: 50%;
+.charts-row {
+  margin-bottom: 20px;
 }
 </style>
