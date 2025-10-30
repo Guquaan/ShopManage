@@ -83,8 +83,7 @@
                 <span>数据统计</span>
               </template>
               <el-menu-item index="3-1" @click="setBreadcrumb(['数据统计', '销售报表'])">销售报表</el-menu-item>
-              <el-menu-item index="3-2" @click="setBreadcrumb(['数据统计', '库存报表'])">库存报表</el-menu-item>
-              <el-menu-item index="3-3" @click="setBreadcrumb(['数据统计', '用户分析'])">用户分析</el-menu-item>
+              <el-menu-item index="3-2" @click="setBreadcrumb(['数据统计', '信息总结'])">信息总结</el-menu-item>
             </el-sub-menu>
             
             <el-menu-item index="4" @click="setBreadcrumb(['系统设置'])">
@@ -154,24 +153,22 @@ const setBreadcrumb = (items: string[]) => {
 // 实现侧边栏的高亮效果
 const active = ref('')
 onMounted(()=>{
-  //   if (router.currentRoute.value.path !== '/goodsmange') {
-  //   localStorage.setItem('active','1-1')
-  //   router.push('/goodsmange')  // 跳转到默认页面
-  // }
-  // const saveIndex = localStorage.getItem('active')
-  // if(saveIndex){
-  //   active.value = saveIndex
-  // } else {
-  //   // 没有保存默认为第一个
-  //   active.value = '1-1'
-  // }
+    if (router.currentRoute.value.path !== '/goodsmange') {
+    localStorage.setItem('active','1-1')
+    router.push('/goodsmange') 
+  }
+  const saveIndex = localStorage.getItem('active')
+  if(saveIndex){
+    active.value = saveIndex
+  } else {
+    // 没有保存默认为第一个
+    active.value = '1-1'
+  }
 })
 // 在进行选择的时候保存index到localStorage上面
-const handleSelect = () => {
-  // // 实时更新高亮效果
-  // active.value = key 
-  // // 保存index到浏览器上
-  // localStorage.setItem('active',key)
+const handleSelect = (key:any) => {
+  active.value = key 
+  localStorage.setItem('active',key)
 }
 
 // 退出登录功能

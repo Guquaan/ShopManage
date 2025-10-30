@@ -7,6 +7,7 @@ import GoodsOrder from '../view/Component/GoodsOrder.vue'
 import UserMange from '../view/Component/UserMange.vue'
 import MerchantMessage from '../view/Component/MerchantMessage.vue'
 import SalesReport from '../view/Component/SalesReport.vue'
+import SumAll from '../view/Component/SumAll.vue'
 const routes: any = [
     {
         path:'/',
@@ -41,6 +42,11 @@ const routes: any = [
                 path:'/salesreport',
                 component:SalesReport,
                 meta:{name:'销售报表'}
+            },
+            {
+                path:'/sumall',
+                component:SumAll,
+                meta:{name:'信息总结'}
             }
         ]
     },

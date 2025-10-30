@@ -10,7 +10,7 @@
     </div>
     
     <div class="chart-container">
-      <h3>热销商品TOP10</h3>
+      <h3>热销商品</h3>
       <div ref="topProductsChart" class="chart-box"></div>
     </div>
   </div>
@@ -164,7 +164,6 @@ const initCategoryChart = () => {
   
   // 创建新实例
   categoryChartInstance = echarts.init(categoryChart.value);
-  
   // 按类别统计销售额
   const categoryMap: Record<string, number> = {};
   productSalesData.value.forEach(product => {
@@ -218,10 +217,8 @@ const initCategoryChart = () => {
       }
     ]
   };
-  
   // 设置图表选项
   categoryChartInstance.setOption(option);
-  
   // 响应窗口大小变化
   window.addEventListener('resize', () => {
     categoryChartInstance?.resize();
@@ -231,7 +228,6 @@ const initCategoryChart = () => {
 // 初始化TOP10商品图表
 const initTopProductsChart = () => {
   if (!topProductsChart.value) return;
-  
   // 销毁已有实例
   if (topProductsChartInstance) {
     topProductsChartInstance.dispose();
@@ -239,7 +235,7 @@ const initTopProductsChart = () => {
   // 创建新实例
   topProductsChartInstance = echarts.init(topProductsChart.value);
   // 获取TOP10商品
-  const topProducts = productSalesData.value.slice(0, 10).reverse();
+  const topProducts = productSalesData.value.reverse();
   // 设置图表选项
   const option = {
     tooltip: {
@@ -291,7 +287,6 @@ const initTopProductsChart = () => {
   };
   // 设置图表选项
   topProductsChartInstance.setOption(option);
-  
   // 响应窗口大小变化
   window.addEventListener('resize', () => {
     topProductsChartInstance?.resize();
@@ -304,7 +299,7 @@ onMounted(() => {
     initTrendChart();
     initCategoryChart();
     initTopProductsChart();
-  }, 1000);
+  }, 800);
 });
 </script>
 
@@ -334,8 +329,6 @@ onMounted(() => {
   width: 100%;
   height: 400px;
 }
-
-/* 响应式调整 */
 @media (max-width: 768px) {
   .chart-box {
     height: 300px;
