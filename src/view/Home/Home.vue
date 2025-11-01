@@ -55,15 +55,15 @@
             :collapse-transition="false"
             @select="handleSelect"
           >
-            <el-menu-item index="1-1" @click="setBreadcrumb(['商品管理'])">
+            <el-menu-item index="1-1" @click="setBreadcrumb('商品管理')">
               <el-icon><Goods /></el-icon>
               <template #title>商品管理</template>
             </el-menu-item>
-            <el-menu-item index="1-2" @click="setBreadcrumb(['库存管理'])">
+            <el-menu-item index="1-2" @click="setBreadcrumb('库存管理')">
               <el-icon><ShoppingTrolley /></el-icon>
               <template #title>库存管理</template>
             </el-menu-item>
-            <el-menu-item index="1-3" @click="setBreadcrumb(['订单管理'])">
+            <el-menu-item index="1-3" @click="setBreadcrumb('订单管理')">
               <el-icon><ShoppingBag /></el-icon>
               <template #title>订单管理</template>
             </el-menu-item>
@@ -72,19 +72,19 @@
                 <el-icon><User /></el-icon>
                 <span>用户管理</span>
               </template>
-              <el-menu-item index="2-1" @click="setBreadcrumb(['用户管理', '用户列表'])">用户列表</el-menu-item>
-              <el-menu-item index="2-2" @click="setBreadcrumb(['用户管理', '商家信息'])">商家信息</el-menu-item>
+              <el-menu-item index="2-1" @click="setBreadcrumb('用户列表')">用户列表</el-menu-item>
+              <el-menu-item index="2-2" @click="setBreadcrumb('商家信息')">商家信息</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
                 <el-icon><Coin /></el-icon>
                 <span>数据统计</span>
               </template>
-              <el-menu-item index="3-1" @click="setBreadcrumb(['数据统计', '销售报表'])">销售报表</el-menu-item>
-              <el-menu-item index="3-2" @click="setBreadcrumb(['数据统计', '信息总结'])">信息总结</el-menu-item>
+              <el-menu-item index="3-1" @click="setBreadcrumb('销售报表')">销售报表</el-menu-item>
+              <el-menu-item index="3-2" @click="setBreadcrumb('信息总结')">信息总结</el-menu-item>
             </el-sub-menu>
             
-            <el-menu-item index="4" @click="setBreadcrumb(['系统设置'])">
+            <el-menu-item index="4" @click="setBreadcrumb('系统设置')">
               <el-icon><Setting /></el-icon>
               <template #title>系统设置</template>
             </el-menu-item>
@@ -118,19 +118,16 @@ const router = useRouter();
 // 侧边栏状态
 const isSidebarCollapsed = ref(false);
 const sidebarWidth = ref('220px');
-// 面包屑数据
-const breadcrumbItems = ref<string[]>(['商品管理']);
 // 切换侧边栏
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
   sidebarWidth.value = isSidebarCollapsed.value ? '64px' : '220px';
 };
 // 利用面包屑进行路由的跳转
-const setBreadcrumb = (items: string[]) => {
-  const targetName = items[items.length - 1];
+const setBreadcrumb = (items: string) => {
   const findRoute = (routes: any[]): any => {
     for (const route of routes) {
-      if (route.meta?.name === targetName) {
+      if (route.meta?.name === items) {
         return route;
       }
       if (route.children && route.children.length) {
@@ -141,7 +138,6 @@ const setBreadcrumb = (items: string[]) => {
     return null;
   };
   const pathRoute = findRoute(router.getRoutes());
-  breadcrumbItems.value = items;
   // 只有找到有效路由时才跳转
   if (pathRoute?.path) {
     router.push(pathRoute.path);

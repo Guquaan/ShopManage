@@ -32,6 +32,8 @@ interface Product {
     updateTime: string;
 }
 
+ let messageTimer: any = null;
+
 export const GoodsManage = defineStore('goodsmange', {
     // 数据状态
     state: (): { goods: Product[] } => ({
@@ -72,8 +74,10 @@ export const GoodsManage = defineStore('goodsmange', {
                     updateTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toLocaleString()
                 };
             });
-            ordersManage().getOrders(20)
             UserManage().getUsers(10)
+            setTimeout(()=>{
+                ordersManage().getOrders(20)
+            },1000)
             localStorage.setItem('goods', JSON.stringify(goods))
         },
 
@@ -136,9 +140,14 @@ export const GoodsManage = defineStore('goodsmange', {
         },
         // 更新库存并保存到本地存储
         updateGoodsStock(goods: Product) {
-            // 定义防抖计时器变量，防止添加减少的时候出现信息弹出频繁
-            let messageTimer: any = null;
-            const showSuccessMessage = () => {
+            const index = this.goods.findIndex((item: Product) => item.id === goods.id);
+            if (index !== -1) {
+                this.goods[index]!.stock = goods.stock;
+                // 更新库存状态
+                this.goods[index]!.status = goods.stock < 10 ? '库存不足' : '在售';
+                // 持久化保存
+                localStorage.setItem('goods', JSON.stringify(this.goods));
+                // 定义防抖计时器变量，防止添加减少的时候出现信息弹出频繁
                 if (messageTimer) {
                     clearTimeout(messageTimer);
                 }
@@ -149,15 +158,6 @@ export const GoodsManage = defineStore('goodsmange', {
                     });
                     messageTimer = null;
                 }, 500);
-            };
-            const index = this.goods.findIndex((item: Product) => item.id === goods.id);
-            if (index !== -1) {
-                this.goods[index]!.stock = goods.stock;
-                // 更新库存状态
-                this.goods[index]!.status = goods.stock < 10 ? '库存不足' : '在售';
-                // 持久化保存
-                localStorage.setItem('goods', JSON.stringify(this.goods));
-                showSuccessMessage();
             }
         }
     }

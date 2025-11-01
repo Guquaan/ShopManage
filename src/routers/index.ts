@@ -8,6 +8,7 @@ import UserMange from '../view/Component/UserMange.vue'
 import MerchantMessage from '../view/Component/MerchantMessage.vue'
 import SalesReport from '../view/Component/SalesReport.vue'
 import SumAll from '../view/Component/SumAll.vue'
+import Setting from '../view/Component/Setting.vue'
 const routes: any = [
     {
         path:'/',
@@ -47,6 +48,11 @@ const routes: any = [
                 path:'/sumall',
                 component:SumAll,
                 meta:{name:'信息总结'}
+            },
+            {
+                path:'setting',
+                component:Setting,
+                meta:{name:'系统设置'}
             }
         ]
     },
