@@ -6,6 +6,13 @@ import 'element-plus/dist/index.css'
 import { createPinia } from 'pinia'
 // 引入路由
 import  router  from '../src/routers/index'
+import { createI18n } from 'vue-i18n'
+
+const i18n = createI18n({
+  legacy: false, // 推荐组合式 API
+  locale: localStorage.getItem('systemLanguage') || 'zh-CN',
+  fallbackLocale: 'zh-CN',
+})
 const app = createApp(App)
 const pinia = createPinia()
 
@@ -29,6 +36,7 @@ router.beforeEach((to:any,_:any,next:any)=>{
 app.use(pinia)
 // 使用路由
 app.use(router)
+app.use(i18n)
 // 使用element-plus组件库
 app.use(ElementPlus)
 app.mount('#app')

@@ -25,7 +25,7 @@
       <div class="account-management">
         <h3>账户管理</h3>
         
-        <el-descriptions column="1" border>
+        <el-descriptions :column=1 border>
           <el-descriptions-item label="当前登录用户">
             {{ currentUser?.username || '未登录' }}
           </el-descriptions-item>
@@ -55,14 +55,14 @@ import { useLoginManage } from '../../store/Login';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
-
+import { useI18n } from 'vue-i18n'
 // 初始化登录管理
 const loginStore = useLoginManage();
 const router = useRouter();
 
 // 语言设置
 const currentLanguage = ref(localStorage.getItem('systemLanguage') || 'zh-CN');
-
+const { locale } = useI18n()
 // 获取当前用户信息
 const currentUser = computed(() => loginStore.currentAccount);
 
@@ -75,7 +75,7 @@ const handleLanguageChange = (lang: string) => {
   });
   
   // 实际项目中这里会触发全局语言切换
-  // i18n.global.locale.value = lang;
+  locale.value = lang;
 };
 
 // 格式化日期
@@ -104,7 +104,7 @@ const handleAccountDeletion = () => {
     {
       confirmButtonText: currentLanguage.value === 'zh-CN' ? '确认' : 'Confirm',
       cancelButtonText: currentLanguage.value === 'zh-CN' ? '取消' : 'Cancel',
-      type: 'danger'
+      type: 'error'
     }
   ).then(() => {
     if (currentUser.value?.id) {
