@@ -14,8 +14,21 @@
           <el-icon class="logo-icon"><ShoppingCart /></el-icon>
           <span class="logo-text">商品管理系统</span>
         </div>
+        <ul class="flex-box">
+          <li 
+          v-for="(item,index) in menu.menu" 
+          :key="item" 
+          :class="{ selected: router.currentRoute.value.meta.name === item }"
+          class="tab flex-box"
+          @click="tabClick(item)"
+          >
+            <span :class="{ text: router.currentRoute.value.meta.name !== item }">{{ item }}</span>
+            <el-icon @click.stop="closeTab(item, index)" class="close" size="12"
+            ><Close/></el-icon>
+          </li>
+        </ul>
       </div>
-      <!-- 面包屑功能实现 -->
+
       <div class="header-right">
         <!-- 登陆控制 -->
         <div class="user-info">
@@ -55,15 +68,15 @@
             :collapse-transition="false"
             @select="handleSelect"
           >
-            <el-menu-item index="1-1" @click="setBreadcrumb('商品管理')">
+            <el-menu-item index="商品管理" @click="setBreadcrumb('商品管理')">
               <el-icon><Goods /></el-icon>
               <template #title>商品管理</template>
             </el-menu-item>
-            <el-menu-item index="1-2" @click="setBreadcrumb('库存管理')">
+            <el-menu-item index="库存管理" @click="setBreadcrumb('库存管理')">
               <el-icon><ShoppingTrolley /></el-icon>
               <template #title>库存管理</template>
             </el-menu-item>
-            <el-menu-item index="1-3" @click="setBreadcrumb('订单管理')">
+            <el-menu-item index="订单管理" @click="setBreadcrumb('订单管理')">
               <el-icon><ShoppingBag /></el-icon>
               <template #title>订单管理</template>
             </el-menu-item>
@@ -72,19 +85,19 @@
                 <el-icon><User /></el-icon>
                 <span>用户管理</span>
               </template>
-              <el-menu-item index="2-1" @click="setBreadcrumb('用户列表')">用户列表</el-menu-item>
-              <el-menu-item index="2-2" @click="setBreadcrumb('商家信息')">商家信息</el-menu-item>
+              <el-menu-item index="用户列表" @click="setBreadcrumb('用户列表')">用户列表</el-menu-item>
+              <el-menu-item index="商家信息" @click="setBreadcrumb('商家信息')">商家信息</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
                 <el-icon><Coin /></el-icon>
                 <span>数据统计</span>
               </template>
-              <el-menu-item index="3-1" @click="setBreadcrumb('销售报表')">销售报表</el-menu-item>
-              <el-menu-item index="3-2" @click="setBreadcrumb('信息总结')">信息总结</el-menu-item>
+              <el-menu-item index="销售报表" @click="setBreadcrumb('销售报表')">销售报表</el-menu-item>
+              <el-menu-item index="信息总结" @click="setBreadcrumb('信息总结')">信息总结</el-menu-item>
             </el-sub-menu>
-            
-            <el-menu-item index="4" @click="setBreadcrumb('系统设置')">
+
+            <el-menu-item index="系统设置" @click="setBreadcrumb('系统设置')">
               <el-icon><Setting /></el-icon>
               <template #title>系统设置</template>
             </el-menu-item>
@@ -109,11 +122,13 @@ import {
   User, 
   Setting ,
   ShoppingTrolley,
-  Coin
+  Coin,
+  Close
 } from '@element-plus/icons-vue';
 import { useRouter} from 'vue-router';
 import { useLoginManage} from '../../store/Login'
 import { ElMessage } from 'element-plus';
+import { breakMenu } from '../../store/break'
 const router = useRouter();
 // 侧边栏状态
 const isSidebarCollapsed = ref(false);
@@ -124,20 +139,62 @@ const toggleSidebar = () => {
   sidebarWidth.value = isSidebarCollapsed.value ? '64px' : '220px';
 };
 // 利用面包屑进行路由的跳转
-const setBreadcrumb = (items: string) => {
-  const findRoute = (routes: any[]): any => {
+const menu = breakMenu()
+console.log(router.currentRoute.value.meta)
+// 关闭标签页功能
+ // 路由跳转逻辑
+  const findRoute = (routes: any[] ,items:any): any => {
     for (const route of routes) {
       if (route.meta?.name === items) {
         return route;
       }
       if (route.children && route.children.length) {
-        const childRoute = findRoute(route.children);
+        const childRoute = findRoute(route.children,items);
         if (childRoute) return childRoute;
       }
     }
     return null;
   };
-  const pathRoute = findRoute(router.getRoutes());
+const closeTab = (items: string, index: number) => {
+  menu.menu.splice(index, 1);
+  // 删除非当前页标签的跳转逻辑
+  if(router.currentRoute.value.meta.name !== items) {
+    return;
+  } 
+  // 删除的如果是最后一项
+  if(index === menu.menu.length) {
+    // 如果是最后一个，跳转至首页
+    if(!menu.menu.length) {
+      router.push('/goodsmanage');
+      menu.menu.push('商品管理')
+      active.value = '商品管理'
+    } else{
+      // 如果前面还有标签，跳转至前一个
+      const previousItem = menu.menu[index - 1];
+      tabClick(previousItem);
+    }
+  } else{
+    // 删除的不是最后一个，跳转至后一个
+    const nextItem = menu.menu[index];
+    tabClick(nextItem);    
+  }
+}
+
+// 点击li标签进行跳转
+const tabClick = (items: any) => {
+  const pathRoute = findRoute(router.getRoutes(), items);
+  // 只有找到有效路由时才跳转
+  if (pathRoute?.path) {
+    router.push(pathRoute.path);
+    // 设置点击后高亮效果
+    active.value = items;
+  }
+};
+
+const setBreadcrumb = (items: string) => {
+  // 点击侧边导航栏标签页逻辑
+  menu.addMenu(items)
+  const pathRoute = findRoute(router.getRoutes(), items);
   // 只有找到有效路由时才跳转
   if (pathRoute?.path) {
     router.push(pathRoute.path);
@@ -145,22 +202,22 @@ const setBreadcrumb = (items: string) => {
 };
 
 // 实现侧边栏的高亮效果
-const active = ref('1-1')
+const active = ref('商品管理')
 onMounted(()=>{
-  if (router.currentRoute.value.path !== '/goodsmange') {
-    localStorage.setItem('active','1-1')
-    router.push('/goodsmange') 
+  if (router.currentRoute.value.path !== '/goodsmanage') {
+    localStorage.setItem('active','商品管理')
+    router.push('/goodsmanage') 
     return
   } else{
-    active.value = '1-1'
-    localStorage.setItem('active','1-1')
+    active.value = '商品管理'
+    localStorage.setItem('active','商品管理')
   }
   const saveIndex = localStorage.getItem('active')
   if(saveIndex){
     active.value = saveIndex
   } else {
     // 没有保存默认为第一个
-    active.value = '1-1'
+    active.value = '商品管理'
   }
 })
 // 在进行选择的时候保存index到localStorage上面
@@ -178,7 +235,7 @@ const Layout = () => {
 
 </script>
 
-<style scoped>
+<style scoped lang="less">
 
 .app-container {
   height: 100vh;
@@ -200,6 +257,7 @@ const Layout = () => {
 
 .header-left {
   display: flex;
+  height: 20px;
   align-items: center;
 }
 
@@ -296,4 +354,38 @@ const Layout = () => {
   padding: 20px;
   overflow-y: auto;
 }
+.flex-box {
+  height: 100%;
+  display: flex;
+  gap: 1vh; 
+  align-items: center;
+  .text{
+    color: #e91196;
+  }
+}
+.tab {
+    padding: 0 1vh;
+    height: 100%;
+    .close {
+      visibility: hidden;
+    }
+    &.selected {
+      background-color: skyblue;
+      i {
+        color: #409eff;
+      }
+      a {
+        color: #409eff;
+      }
+    }
+  }
+  .tab:hover {
+    background-color: skyblue; 
+    cursor: pointer;
+    .close {
+      visibility: inherit;
+      background-color: white;
+      color: #000;
+    }
+  }
 </style>

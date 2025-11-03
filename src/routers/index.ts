@@ -15,7 +15,7 @@ const routes: any = [
         component:Home,
         children:[
             {
-                path:'/goodsmange',
+                path:'/goodsmanage',
                 component:GoodsMange,
                 meta:{name:'商品管理'}
             },

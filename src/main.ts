@@ -26,7 +26,7 @@ router.beforeEach((to:any,_:any,next:any)=>{
     else if(token&&to.path === '/login'){
         next() 
     } else if(token && to.path === '/'){
-        next('/goodsmange')
+        next('/goodsmanage')
     }
      else {
         next()
