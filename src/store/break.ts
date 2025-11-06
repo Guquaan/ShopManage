@@ -1,10 +1,9 @@
 // 用于生成面包屑的方法
 import { defineStore } from "pinia";
-
-
 export const breakMenu = defineStore('breakMenu',{
+    
     state:()=>({
-        menu:['商品管理'],
+        menu:['aside.goodsManage'],
     }),
 
 

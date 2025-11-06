@@ -6,12 +6,18 @@ import 'element-plus/dist/index.css'
 import { createPinia } from 'pinia'
 // 引入路由
 import  router  from '../src/routers/index'
+// 导入语言库
 import { createI18n } from 'vue-i18n'
-
+import zhCN from './locales/zh-CN'
+import enUS from './locales/en-US'
 const i18n = createI18n({
-  legacy: false, // 推荐组合式 API
+  legacy: false, 
   locale: localStorage.getItem('systemLanguage') || 'zh-CN',
   fallbackLocale: 'zh-CN',
+  messages:{
+    'zh-CN':zhCN,
+    'en-US':enUS,
+  }
 })
 const app = createApp(App)
 const pinia = createPinia()

@@ -17,42 +17,42 @@ const routes: any = [
             {
                 path:'/goodsmanage',
                 component:GoodsMange,
-                meta:{name:'商品管理'}
+                meta:{name:'aside.goodsManage',icon:'Goods'}
             },
             {
                 path:'/goodshouse',
                 component:GoodsHouse,
-                meta:{name:'库存管理'}
+                meta:{name:'aside.houseManage',icon:'ShoppingTrolley'}
             },
             {
                 path:'/goodsorder',
                 component:GoodsOrder,
-                meta:{name:'订单管理'}
+                meta:{name:'aside.ordersManage',icon:'ShoppingBag'}
             },
             {
                 path:'/usermange',
                 component:UserMange,
-                meta:{name:'用户列表'}
+                meta:{name:'aside.usersList',icon:'User'}
             },
             {
                 path:'/merchantmessage',
                 component:MerchantMessage,
-                meta:{name:'商家信息'}
+                meta:{name:'aside.merchantMessage',icon:''}
             },
             {
                 path:'/salesreport',
                 component:SalesReport,
-                meta:{name:'销售报表'}
+                meta:{name:'aside.salesReport',icon:''}
             },
             {
                 path:'/sumall',
                 component:SumAll,
-                meta:{name:'信息总结'}
+                meta:{name:'aside.sumMessage',icon:'Coin'}
             },
             {
                 path:'setting',
                 component:Setting,
-                meta:{name:'系统设置'}
+                meta:{name:'aside.systemSetting',icon:'Setting'}
             }
         ]
     },

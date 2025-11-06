@@ -12,7 +12,7 @@
       </el-button>
         <div class="logo">
           <el-icon class="logo-icon"><ShoppingCart /></el-icon>
-          <span class="logo-text">商品管理系统</span>
+          <span class="logo-text">{{t('logo')}}</span>
         </div>
         <ul class="flex-box">
           <li 
@@ -22,7 +22,10 @@
           class="tab flex-box"
           @click="tabClick(item)"
           >
-            <span :class="{ text: router.currentRoute.value.meta.name !== item }">{{ item }}</span>
+            <el-icon size="12">
+              <component :is="router.getRoutes().find(items => items.meta.name === item)!.meta.icon" />
+            </el-icon>
+            <span :class="{ text: router.currentRoute.value.meta.name !== item }">{{ t(item) }}</span>
             <el-icon @click.stop="closeTab(item, index)" class="close" size="12"
             ><Close/></el-icon>
           </li>
@@ -68,38 +71,44 @@
             :collapse-transition="false"
             @select="handleSelect"
           >
-            <el-menu-item index="商品管理" @click="setBreadcrumb('商品管理')">
+            <el-menu-item :index="t('aside.goodsManage') " @click="setBreadcrumb('aside.goodsManage' )">
               <el-icon><Goods /></el-icon>
-              <template #title>商品管理</template>
+              <template #title>{{ t('aside.goodsManage') }}</template>
             </el-menu-item>
-            <el-menu-item index="库存管理" @click="setBreadcrumb('库存管理')">
+            <el-menu-item :index="t('aside.houseManage') " @click="setBreadcrumb('aside.houseManage' )">
               <el-icon><ShoppingTrolley /></el-icon>
-              <template #title>库存管理</template>
+              <template #title>{{ t('aside.houseManage') }}</template>
             </el-menu-item>
-            <el-menu-item index="订单管理" @click="setBreadcrumb('订单管理')">
+            <el-menu-item :index="t('aside.ordersManage') " @click="setBreadcrumb('aside.ordersManage')">
               <el-icon><ShoppingBag /></el-icon>
-              <template #title>订单管理</template>
+              <template #title>{{ t('aside.ordersManage') }}</template>
             </el-menu-item>
             <el-sub-menu index="2">
               <template #title>
                 <el-icon><User /></el-icon>
-                <span>用户管理</span>
+                <span>{{ t('aside.userManage') }}</span>
               </template>
-              <el-menu-item index="用户列表" @click="setBreadcrumb('用户列表')">用户列表</el-menu-item>
-              <el-menu-item index="商家信息" @click="setBreadcrumb('商家信息')">商家信息</el-menu-item>
+              <el-menu-item :index="t('aside.usersList')" @click="setBreadcrumb('aside.usersList')">
+                <el-icon></el-icon>
+              <span>{{ t('aside.usersList') }}</span>
+            </el-menu-item>
+              <el-menu-item :index="t('aside.merchantMessage')" @click="setBreadcrumb('aside.merchantMessage')">
+                <el-icon></el-icon>
+                <span>{{ t('aside.merchantMessage') }}</span>
+              </el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="3">
               <template #title>
                 <el-icon><Coin /></el-icon>
-                <span>数据统计</span>
+                <span>{{ t('aside.sumAll') }}</span>
               </template>
-              <el-menu-item index="销售报表" @click="setBreadcrumb('销售报表')">销售报表</el-menu-item>
-              <el-menu-item index="信息总结" @click="setBreadcrumb('信息总结')">信息总结</el-menu-item>
+              <el-menu-item :index="t('aside.salesReport')" @click="setBreadcrumb('aside.salesReport')">{{ t('aside.salesReport') }}</el-menu-item>
+              <el-menu-item :index="t('aside.sumMessage')" @click="setBreadcrumb('aside.sumMessage')">{{ t('aside.sumMessage') }}</el-menu-item>
             </el-sub-menu>
 
-            <el-menu-item index="系统设置" @click="setBreadcrumb('系统设置')">
+            <el-menu-item :index="t('aside.systemSetting')" @click="setBreadcrumb('aside.systemSetting')">
               <el-icon><Setting /></el-icon>
-              <template #title>系统设置</template>
+              <template #title>{{ t('aside.systemSetting') }}</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
@@ -129,6 +138,8 @@ import { useRouter} from 'vue-router';
 import { useLoginManage} from '../../store/Login'
 import { ElMessage } from 'element-plus';
 import { breakMenu } from '../../store/break'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 const router = useRouter();
 // 侧边栏状态
 const isSidebarCollapsed = ref(false);
@@ -140,7 +151,7 @@ const toggleSidebar = () => {
 };
 // 利用面包屑进行路由的跳转
 const menu = breakMenu()
-console.log(router.currentRoute.value.meta)
+console.log(router.getRoutes())
 // 关闭标签页功能
  // 路由跳转逻辑
   const findRoute = (routes: any[] ,items:any): any => {
@@ -166,8 +177,8 @@ const closeTab = (items: string, index: number) => {
     // 如果是最后一个，跳转至首页
     if(!menu.menu.length) {
       router.push('/goodsmanage');
-      menu.menu.push('商品管理')
-      active.value = '商品管理'
+      menu.menu.push('aside.goodsManage')
+      active.value = t('aside.goodsManage')
     } else{
       // 如果前面还有标签，跳转至前一个
       const previousItem = menu.menu[index - 1];
@@ -187,7 +198,7 @@ const tabClick = (items: any) => {
   if (pathRoute?.path) {
     router.push(pathRoute.path);
     // 设置点击后高亮效果
-    active.value = items;
+    active.value = t(items);
   }
 };
 
@@ -202,22 +213,22 @@ const setBreadcrumb = (items: string) => {
 };
 
 // 实现侧边栏的高亮效果
-const active = ref('商品管理')
+const active = ref(t('aside.goodsManage'))
 onMounted(()=>{
   if (router.currentRoute.value.path !== '/goodsmanage') {
-    localStorage.setItem('active','商品管理')
+    localStorage.setItem('active',t('aside.goodsManage'))
     router.push('/goodsmanage') 
     return
   } else{
-    active.value = '商品管理'
-    localStorage.setItem('active','商品管理')
+    active.value = t('aside.goodsManage')
+    localStorage.setItem('active',t('aside.goodsManage'))
   }
   const saveIndex = localStorage.getItem('active')
   if(saveIndex){
     active.value = saveIndex
   } else {
     // 没有保存默认为第一个
-    active.value = '商品管理'
+    active.value = t('aside.goodsManage')
   }
 })
 // 在进行选择的时候保存index到localStorage上面
@@ -257,7 +268,7 @@ const Layout = () => {
 
 .header-left {
   display: flex;
-  height: 20px;
+  height: 25px;
   align-items: center;
 }
 
