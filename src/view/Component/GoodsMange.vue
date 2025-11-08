@@ -1,7 +1,6 @@
 <template>
       <!-- 主内容区域 -->
         <div class="content-header">
-          <h2 class="content-title">商品管理</h2>
           <div class="content-actions">
             <el-button type="primary" @click="handleAdd">
               <el-icon><Plus /></el-icon>
@@ -541,19 +540,6 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 20px;
 }
-
-.content-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-  color: #1e293b;
-}
-
-.content-actions {
-  display: flex;
-  gap: 10px;
-}
-
 .search-card {
   margin-bottom: 20px;
   background-color: #ffffff;

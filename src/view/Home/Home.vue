@@ -22,8 +22,8 @@
           class="tab flex-box"
           @click="tabClick(item)"
           >
-            <el-icon size="12">
-              <component :is="router.getRoutes().find(items => items.meta.name === item)!.meta.icon" />
+            <el-icon size="12" v-if="getIconComponent(router.getRoutes().find(r => r.meta?.name === item)?.meta?.icon)">
+              <component :is="getIconComponent(router.getRoutes().find(r => r.meta?.name === item)?.meta?.icon)" />
             </el-icon>
             <span :class="{ text: router.currentRoute.value.meta.name !== item }">{{ t(item) }}</span>
             <el-icon @click.stop="closeTab(item, index)" class="close" size="12"
@@ -31,7 +31,6 @@
           </li>
         </ul>
       </div>
-
       <div class="header-right">
         <!-- 登陆控制 -->
         <div class="user-info">
@@ -40,12 +39,12 @@
               <el-avatar :size="32">
                 <img src="../../data/photo/登陆头像.png" alt="用户头像" />
               </el-avatar>
-              <span class="user-name">管理员</span>
+              <span class="user-name">{{t('admin')}}</span>
               <el-icon class="arrow-icon"></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item divided @click="Layout">退出登录</el-dropdown-item>
+                <el-dropdown-item divided @click="Layout">{{t('logout')}}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -89,11 +88,11 @@
                 <span>{{ t('aside.userManage') }}</span>
               </template>
               <el-menu-item :index="t('aside.usersList')" @click="setBreadcrumb('aside.usersList')">
-                <el-icon></el-icon>
+                <el-icon><UserFilled /></el-icon>
               <span>{{ t('aside.usersList') }}</span>
             </el-menu-item>
               <el-menu-item :index="t('aside.merchantMessage')" @click="setBreadcrumb('aside.merchantMessage')">
-                <el-icon></el-icon>
+                <el-icon><Avatar /></el-icon>
                 <span>{{ t('aside.merchantMessage') }}</span>
               </el-menu-item>
             </el-sub-menu>
@@ -102,8 +101,14 @@
                 <el-icon><Coin /></el-icon>
                 <span>{{ t('aside.sumAll') }}</span>
               </template>
-              <el-menu-item :index="t('aside.salesReport')" @click="setBreadcrumb('aside.salesReport')">{{ t('aside.salesReport') }}</el-menu-item>
-              <el-menu-item :index="t('aside.sumMessage')" @click="setBreadcrumb('aside.sumMessage')">{{ t('aside.sumMessage') }}</el-menu-item>
+              <el-menu-item :index="t('aside.salesReport')" @click="setBreadcrumb('aside.salesReport')">
+                <el-icon><Message/></el-icon>
+                {{ t('aside.salesReport') }}
+              </el-menu-item>
+              <el-menu-item :index="t('aside.sumMessage')" @click="setBreadcrumb('aside.sumMessage')">
+                <el-icon><Coin /></el-icon>
+                {{ t('aside.sumMessage') }}
+              </el-menu-item>
             </el-sub-menu>
 
             <el-menu-item :index="t('aside.systemSetting')" @click="setBreadcrumb('aside.systemSetting')">
@@ -132,13 +137,19 @@ import {
   Setting ,
   ShoppingTrolley,
   Coin,
-  Close
+  Close,
+  UserFilled,Avatar,Message
 } from '@element-plus/icons-vue';
 import { useRouter} from 'vue-router';
 import { useLoginManage} from '../../store/Login'
 import { ElMessage } from 'element-plus';
 import { breakMenu } from '../../store/break'
 import { useI18n } from 'vue-i18n'
+import * as ELIcons from '@element-plus/icons-vue'
+const getIconComponent = (name: unknown) => {
+  const key = typeof name === 'string' && name ? name : ''
+  return key ? (ELIcons as Record<string, any>)[key] || null : null
+}
 const { t } = useI18n()
 const router = useRouter();
 // 侧边栏状态
@@ -377,14 +388,12 @@ const Layout = () => {
 .tab {
     padding: 0 1vh;
     height: 100%;
+    background-color: rgba(0,5,0,0.1);
     .close {
       visibility: hidden;
     }
     &.selected {
       background-color: skyblue;
-      i {
-        color: #409eff;
-      }
       a {
         color: #409eff;
       }

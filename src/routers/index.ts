@@ -32,17 +32,17 @@ const routes: any = [
             {
                 path:'/usermange',
                 component:UserMange,
-                meta:{name:'aside.usersList',icon:'User'}
+                meta:{name:'aside.usersList',icon:'UserFilled'}
             },
             {
                 path:'/merchantmessage',
                 component:MerchantMessage,
-                meta:{name:'aside.merchantMessage',icon:''}
+                meta:{name:'aside.merchantMessage',icon:'Avatar'}
             },
             {
                 path:'/salesreport',
                 component:SalesReport,
-                meta:{name:'aside.salesReport',icon:''}
+                meta:{name:'aside.salesReport',icon:'Message'}
             },
             {
                 path:'/sumall',

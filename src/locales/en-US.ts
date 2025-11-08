@@ -1,5 +1,7 @@
 export default {
   logo:"ShopManageManage",
+  admin:'admin',
+  logout:'logout',
   system: {
     settings: "System Settings",
     customSettings: "Customize your system preferences",

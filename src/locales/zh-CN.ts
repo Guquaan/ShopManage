@@ -1,5 +1,7 @@
 export default {
   logo:"商品管理系统",
+  admin:"管理员",
+  logout:'退出登陆',
   system: {
     settings: "系统设置",
     customSettings: "自定义您的系统偏好设置",
