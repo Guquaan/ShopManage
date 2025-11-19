@@ -472,15 +472,15 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 6vh;
 }
 .content-actions {
   display: flex;
-  gap: 10px;
+  gap: 2vh;
 }
 
 .search-card {
-  margin-bottom: 20px;
+  margin-bottom: 4vh;
   background-color: #ffffff;
 }
 
@@ -489,7 +489,7 @@ onMounted(() => {
 }
 
 .pagination-container {
-  margin-top: 15px;
+  margin-top: 3vh;
   text-align: right;
 }
 </style>

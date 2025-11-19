@@ -140,21 +140,21 @@ onMounted(() => {
 
 <style lang="css" scoped>
 .warehouse-view {
-  padding: 20px;
-  max-width: 1200px;
+  padding: 2.5vh;
+  max-width: 150vh;
   margin: 0 auto;
 }
 
 .filter-card {
-  margin-bottom: 20px;
-  padding: 15px;
+  margin-bottom: 2.5vh;
+  padding: 1.8vh;
 }
 
 .goods-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+  gap: 2.5vh;
+  margin-top: 2.5vh;
 }
 
 .goods-card {

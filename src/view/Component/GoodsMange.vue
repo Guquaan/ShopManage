@@ -538,15 +538,15 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 2.5vh;
 }
 .search-card {
-  margin-bottom: 20px;
+  margin-bottom: 2.5vh;
   background-color: #ffffff;
 }
 
 .stats-row {
-  margin-bottom: 20px;
+  margin-bottom: 2.5vh;
 }
 
 .stat-card {
@@ -555,7 +555,7 @@ onMounted(() => {
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1.25vh 1.5vh rgba(0, 0, 0, 0.1);
 }
 
 .stat-content {
@@ -565,24 +565,24 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 1.8vh;
   color: #64748b;
-  margin: 0 0 5px 0;
+  margin: 0 0 0.525vh 0;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 3vh;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 0 5px 0;
+  margin: 0 0 1.25vh 0;
 }
 
 .stat-change {
-  font-size: 12px;
+  font-size: 1.5vh;
   margin: 0;
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 0.475vh;
 }
 
 .positive {
@@ -594,13 +594,13 @@ onMounted(() => {
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 6vh;
+  height: 6vh;
+  border-radius: 1vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 3vh;
 }
 
 .goods-icon {
@@ -630,12 +630,12 @@ onMounted(() => {
 .product-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1.25vh;
 }
 
 .product-image {
-  width: 40px;
-  height: 40px;
+  width: 5vh;
+  height: 5vh;
   border-radius: 4px;
   object-fit: cover;
 }
@@ -656,11 +656,11 @@ onMounted(() => {
 }
 
 .pagination-container {
-  margin-top: 15px;
+  margin-top: 1.9vh;
   text-align: right;
 }
 
 .upload-demo {
-  margin-top: 10px;
+  margin-top: 1.25vh;
 }
 </style>

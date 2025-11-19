@@ -131,19 +131,19 @@ onMounted(() => {
 </script>
 <style lang="less" scoped>
 .merchant-container {
-  padding: 20px;
+  padding: 2.5vh;
 }
 .info-card {
   .merchant-form {
-    margin-top: 20px;
+    margin-top: 2.5vh;
   }
   .form-actions {
-    margin-top: 30px;
+    margin-top: 4.25vh;
     text-align: right;
   }
 }
 
 .upload-license {
-  margin-bottom: 15px;
+  margin-bottom:2.75vh;
 }
 </style>

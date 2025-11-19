@@ -329,13 +329,13 @@ onBeforeUnmount(() => {
 
 <style lang="css" scoped>
 .comprehensive-report {
-  padding: 20px;
-  max-width: 1200px;
+  padding: 5vh;
+  max-width: 600vh;
   margin: 0 auto;
 }
 
 .chart-card {
-  height: 340px;
+  height: 50vh;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -343,28 +343,28 @@ onBeforeUnmount(() => {
 }
 
 .chart-card ::v-deep(.el-card__header) {
-  padding: 12px 20px;
-  font-size: 16px;
+  padding: 1.25vh 2.5vh;
+  font-size: 2vh;
   font-weight: 600;
   color: #1f2937;
   background: transparent;
 }
 
 .chart-container {
-  padding: 12px 20px 20px;
+  padding: 1.125vh 2.5vh 2.5vh;
   flex: 1;
   display: flex;
-  gap: 20px;
+  gap: 2.5vh;
   align-items: stretch;
 }
 
 .chart {
   background-color: #fff;
-  border-radius: 6px;
+  border-radius: 0.8vh;
   width: 100%;
   height: 100%;
-  min-height: 240px; 
-  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+  min-height: 30vh; 
+  box-shadow: 0 0.125vh 0.25vh rgba(16,24,40,0.04);
 }
 
 @media (max-width: 900px) {
@@ -375,30 +375,30 @@ onBeforeUnmount(() => {
     flex-direction: column;
   }
   .chart-card {
-    margin-bottom: 16px;
+    margin-bottom: 2vh;
     height: auto;
   }
 }
 
 .table-card {
-  min-height: 400px;
+  min-height: 50vh;
 }
 
 .product-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1.25vh;
 }
 .product-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
+  width: 5vh;
+  height: 5vh;
+  border-radius: 0.5vh;
   object-fit: cover;
 }
 .product-name {
   line-height: 1.4;
 }
 .charts-row {
-  margin-bottom: 20px;
+  margin-bottom: 2.5vh;
 }
 </style>

@@ -248,17 +248,17 @@ img {
 
     .formLogin {
         background-color: #fff;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        padding: 10vh;
+        border-radius: 3vh;
+        box-shadow: 0 0.5vh 3vh 0 rgba(0, 0, 0, 0.1);
         text-align: center;
         width: 50%;
 
         h4 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 5vh;
             color: #333;
-            font-size: 18px;
+            font-size: 5vh;
         }
 
         .el-form-item {
@@ -286,7 +286,7 @@ img {
 
     .link {
         text-align: right;
-        margin-bottom: 0.625rem;
+        margin-bottom: 1.5vh;
 
     }
 }

@@ -304,33 +304,33 @@ onMounted(() => {
 
 <style lang="css" scoped>
 .sales-report-charts {
-  padding: 20px;
-  max-width: 1200px;
+  padding: 2.5vh;
+  max-width: 150vh;
   margin: 0 auto;
 }
 
 .chart-container {
-  margin-bottom: 30px;
+  margin-bottom: 3.75vh;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
-  padding: 16px;
+  border-radius: 1vh;
+  box-shadow: 0 0.25vh 1.5vh 0 rgba(0, 0, 0, 0.08);
+  padding: 2.5vh;
 }
 
 .chart-container h3 {
-  margin: 0 0 16px 0;
+  margin: 0 0 2vh 0;
   color: #1e293b;
-  font-size: 16px;
+  font-size: 2vh;
   font-weight: 600;
 }
 
 .chart-box {
   width: 100%;
-  height: 400px;
+  height: 50vh;
 }
 @media (max-width: 768px) {
   .chart-box {
-    height: 300px;
+    height: 42.5vh;
   }
 }
 </style>

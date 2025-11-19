@@ -630,7 +630,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 2.5vh;
 }
 .content-actions {
   display: flex;
@@ -638,12 +638,12 @@ onMounted(() => {
 }
 
 .search-card {
-  margin-bottom: 20px;
+  margin-bottom: 2.5vh;
   background-color: #ffffff;
 }
 
 .stats-row {
-  margin-bottom: 20px;
+  margin-bottom: 2.5vh;
 }
 
 .stat-card {
@@ -652,7 +652,7 @@ onMounted(() => {
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1.25vh 2.5vh rgba(0, 0, 0, 0.1);
 }
 
 .stat-content {
@@ -662,16 +662,16 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 1.7vh;
   color: #64748b;
-  margin: 0 0 5px 0;
+  margin: 0 0 0.625vh 0;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 3vh;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 0 5px 0;
+  margin: 0 0 0.625vh 0;
 }
 
 

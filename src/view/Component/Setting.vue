@@ -131,57 +131,57 @@ onMounted(() => {
 
 <style scoped>
 .system-settings {
-  padding: 20px;
-  max-width: 800px;
+  padding: 2.5vh;
+  max-width: 100vh;
   margin: 0 auto;
 }
 
 .settings-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  border-radius: 1vh;
+  box-shadow: 0 0.25vh 1.5vh 0 rgba(0, 0, 0, 0.08);
 }
 
 .settings-header {
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 2.5vh;
+  padding-bottom: 1.25vh;
+  border-bottom: 0.125vh solid #f0f0f0;
 }
 
 .settings-header h2 {
   margin: 0 0 10px 0;
   color: #1e293b;
-  font-size: 20px;
+  font-size: 2.5vh;
 }
 
 .settings-header p {
   margin: 0;
   color: #64748b;
-  font-size: 14px;
+  font-size: 1.65vh;
 }
 
 .setting-item {
-  margin-bottom: 25px;
+  margin-bottom: 3.125vh;
 }
 
 .setting-desc {
-  margin-top: 8px;
+  margin-top: 1vh;
   color: #64748b;
-  font-size: 13px;
-  margin-left: 120px; /* 与label对齐 */
+  font-size: 1.7vh;
+  margin-left: 15vh; 
 }
 
 .account-management {
-  margin-top: 20px;
+  margin-top: 2.5vh;
 }
 
 .account-management h3 {
-  margin: 0 0 15px 0;
+  margin: 0 0 1.8vh 0;
   color: #1e293b;
-  font-size: 16px;
+  font-size: 2vh;
 }
 
 .account-actions {
-  margin-top: 20px;
+  margin-top: 2.5vh;
   display: flex;
   justify-content: flex-end;
 }
