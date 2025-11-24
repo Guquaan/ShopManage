@@ -25,7 +25,9 @@
             <el-icon size="12" v-if="getIconComponent(router.getRoutes().find(r => r.meta?.name === item)?.meta?.icon)">
               <component :is="getIconComponent(router.getRoutes().find(r => r.meta?.name === item)?.meta?.icon)" />
             </el-icon>
-            <span :class="{ text: router.currentRoute.value.meta.name !== item }">{{ t(item) }}</span>
+            <span
+            class="tab-text"
+             :class="{ text: router.currentRoute.value.meta.name !== item }">{{ t(item) }}</span>
             <el-icon @click.stop="closeTab(item, index)" class="close" size="12"
             ><Close/></el-icon>
           </li>
@@ -270,21 +272,21 @@ const Layout = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  height: 60px;
+  padding: 0 2.5vh;
+  height: 7.5vh;
   background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 1vh rgba(0, 0, 0, 0.08);
   z-index: 10;
 }
 
 .header-left {
   display: flex;
-  height: 25px;
+  height: 3vh;
   align-items: center;
 }
 
 .menu-toggle {
-  margin-right: 15px;
+  margin-right: 2vh;
 }
 
 .logo {
@@ -294,12 +296,12 @@ const Layout = () => {
 
 .logo-icon {
   color: #409eff;
-  font-size: 24px;
-  margin-right: 8px;
+  font-size: 3vh;
+  margin-right: 1vh;
 }
 
 .logo-text {
-  font-size: 18px;
+  font-size: 2.2vh;
   font-weight: 600;
   color: #1e293b;
 }
@@ -307,7 +309,7 @@ const Layout = () => {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 2.5vh;
 }
 .user-info {
   display: flex;
@@ -318,8 +320,8 @@ const Layout = () => {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 5px;
-  border-radius: 4px;
+  padding: 0.7vh;
+  border-radius: 0.5vh;
   transition: background-color 0.2s;
 }
 
@@ -328,12 +330,12 @@ const Layout = () => {
 }
 
 .user-name {
-  margin: 0 8px;
-  font-size: 14px;
+  margin: 0 1vh;
+  font-size: 1.2vh;
 }
 
 .arrow-icon {
-  font-size: 16px;
+  font-size: 2vh;
   color: #64748b;
 }
 
@@ -362,9 +364,9 @@ const Layout = () => {
 
 .sidebar-menu .el-menu-item,
 .sidebar-menu .el-sub-menu__title {
-  height: 50px;
-  line-height: 50px;
-  padding: 0 15px;
+  height: 6vh;
+  line-height: 6vh;
+  padding: 0 2vh;
 }
 
 .sidebar-menu .el-menu-item.is-active {
@@ -373,7 +375,7 @@ const Layout = () => {
 
 .app-content {
   flex: 1;
-  padding: 20px;
+  padding: 2.5vh;
   overflow-y: auto;
 }
 .flex-box {
@@ -383,6 +385,10 @@ const Layout = () => {
   align-items: center;
   .text{
     color: #e91196;
+  }
+  .tab-text{
+    margin-left: 0.5vh;
+    font-size: 1.4vh;
   }
 }
 .tab {
