@@ -12,6 +12,10 @@ import Setting from '../view/Component/Setting.vue'
 const routes: any = [
     {
         path:'/',
+        redirect:'/home',
+    },
+    {
+        path:'/home',
         component:Home,
         children:[
             {

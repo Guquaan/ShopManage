@@ -351,16 +351,12 @@ const resetSearch = () => {
 };
 
 // 加载表格数据，模拟生成商品数据
-const loadTableData = () => {
-  if(goodsManage.goods.length > 0){
-    tableData.value = goodsManage.goods;
-    total.value = goodsManage.goods.length;
-    return;
-  } else {
-    goodsManage.getGoods(20);
-    tableData.value = localStorage.getItem('goods') ? JSON.parse(localStorage.getItem('goods') || '') : [];
-    total.value = tableData.value.length;
-  }
+const loadTableData = async () => {
+  loading.value = true;
+  await goodsManage.getGoods(); 
+  tableData.value = goodsManage.goods;
+  total.value = tableData.value.length;
+  loading.value = false;
 };
 
 
@@ -453,7 +449,7 @@ const handleDelete = (row:Product) => {
     }
   ).then(() => {
     // 模拟删除操作
-    goodsManage.deleteGoodsData(row)
+    goodsManage.deleteGoods(row.id)
     tableData.value = tableData.value.filter(item => item.id !== row.id);
     total.value = tableData.value.length;
     ElMessage({

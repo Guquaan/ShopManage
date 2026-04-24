@@ -1,24 +1,25 @@
-import { defineStore } from 'pinia'
-import image1 from './../data/photo/笔记本.png'
-import image2 from './../data/photo/手机.png'
-import image3 from './../data/photo/手表.png'
-import image4 from './../data/photo/耳机.png'
-import food1 from './../data/photo/食物1.png'
-import food2 from './../data/photo/食物2.png'
-import food3 from './../data/photo/食物3.png'
-import food4 from './../data/photo/食物4.png'
-import clothing1 from './../data/photo/衣服1.png'
-import clothing2 from './../data/photo/衣服2.png'
-import clothing3 from './../data/photo/衣服3.png'
-import clothing4 from './../data/photo/衣服4.png'
-import home1 from './../data/photo/家具1.png'
-import home2 from './../data/photo/家具2.png'
-import home3 from './../data/photo/家具3.png'
-import home4 from './../data/photo/家具4.png'
+import { defineStore } from 'pinia';
+import request from '../api/request'
 import { ElMessage } from 'element-plus'
-import { getRandomFourDigits } from '../data/Random'
-import { ordersManage } from './Order'
-import { UserManage } from './User'
+// import image1 from './../data/photo/笔记本.png'
+// import image2 from './../data/photo/手机.png'
+// import image3 from './../data/photo/手表.png'
+// import image4 from './../data/photo/耳机.png'
+// import food1 from './../data/photo/食物1.png'
+// import food2 from './../data/photo/食物2.png'
+// import food3 from './../data/photo/食物3.png'
+// import food4 from './../data/photo/食物4.png'
+// import clothing1 from './../data/photo/衣服1.png'
+// import clothing2 from './../data/photo/衣服2.png'
+// import clothing3 from './../data/photo/衣服3.png'
+// import clothing4 from './../data/photo/衣服4.png'
+// import home1 from './../data/photo/家具1.png'
+// import home2 from './../data/photo/家具2.png'
+// import home3 from './../data/photo/家具3.png'
+// import home4 from './../data/photo/家具4.png'
+// import { getRandomFourDigits } from '../data/Random'
+// import { ordersManage } from './Order'
+// import { UserManage } from './User'
 // 表格数据
 interface Product {
     id: number;
@@ -32,7 +33,7 @@ interface Product {
     updateTime: string;
 }
 
- let messageTimer: any = null;
+//  let messageTimer: any = null;
 
 export const GoodsManage = defineStore('goodsmange', {
     // 数据状态
@@ -41,7 +42,7 @@ export const GoodsManage = defineStore('goodsmange', {
     }),
 
     // 实现方法
-    actions: {
+    /*actions: {
         // 获取虚拟数据的函数
         getGoods(total: number) {
             // 模拟数据
@@ -160,5 +161,31 @@ export const GoodsManage = defineStore('goodsmange', {
                 }, 500);
             }
         }
+    }*/
+   actions: {
+    // 获取商品列表（从接口）
+    async getGoods() {
+      const res = await request.get('/goods');
+      this.goods = res.data;
+    },
+    // 添加商品（调用接口）
+    async addGoodsData(form: any) {
+      const res = await request.post('/goods', form);
+      this.goods.push(res.data);
+      ElMessage.success('添加成功');
+    },
+    // 编辑商品（调用接口）
+    async editGoodsData(form: any) {
+      await request.put(`/goods/${form.id}`, form);
+      const index = this.goods.findIndex(item => item.id === form.id);
+      if (index !== -1) this.goods[index] = form;
+      ElMessage.success('编辑成功');
+    },
+    // 删除商品（调用接口）
+    async deleteGoods(id: number) {
+      await request.delete(`/goods/${id}`);
+      this.goods = this.goods.filter(item => item.id !== id);
+      ElMessage.success('删除成功');
     }
+  }
 })
