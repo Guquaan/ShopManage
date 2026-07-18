@@ -310,12 +310,10 @@ const orderStatusOption = () => {
 };
 // 页面加载时初始化
 onMounted(() => {
-  setTimeout(() => {
-    salesTrendOption()
-    categoryPieOption()
-    userPurchaseOption()
-    orderStatusOption()
-  }, 500);
+  salesTrendOption()
+  categoryPieOption()
+  userPurchaseOption()
+  orderStatusOption()
   window.addEventListener('resize', resizeAllCharts);
 });
 onBeforeUnmount(() => {
@@ -329,13 +327,13 @@ onBeforeUnmount(() => {
 
 <style lang="css" scoped>
 .comprehensive-report {
-  padding: 5vh;
-  max-width: 600vh;
+  padding: 20px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
 .chart-card {
-  height: 50vh;
+  height: 400px;
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -343,28 +341,28 @@ onBeforeUnmount(() => {
 }
 
 .chart-card ::v-deep(.el-card__header) {
-  padding: 1.25vh 2.5vh;
-  font-size: 2vh;
+  padding: 10px 20px;
+  font-size: 16px;
   font-weight: 600;
   color: #1f2937;
   background: transparent;
 }
 
 .chart-container {
-  padding: 1.125vh 2.5vh 2.5vh;
+  padding: 10px 20px 20px;
   flex: 1;
   display: flex;
-  gap: 2.5vh;
+  gap: 20px;
   align-items: stretch;
 }
 
 .chart {
   background-color: #fff;
-  border-radius: 0.8vh;
+  border-radius: 6px;
   width: 100%;
   height: 100%;
-  min-height: 30vh; 
-  box-shadow: 0 0.125vh 0.25vh rgba(16,24,40,0.04);
+  min-height: 250px; 
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
 }
 
 @media (max-width: 900px) {
@@ -375,30 +373,30 @@ onBeforeUnmount(() => {
     flex-direction: column;
   }
   .chart-card {
-    margin-bottom: 2vh;
+    margin-bottom: 16px;
     height: auto;
   }
 }
 
 .table-card {
-  min-height: 50vh;
+  min-height: 400px;
 }
 
 .product-info {
   display: flex;
   align-items: center;
-  gap: 1.25vh;
+  gap: 10px;
 }
 .product-image {
-  width: 5vh;
-  height: 5vh;
-  border-radius: 0.5vh;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
   object-fit: cover;
 }
 .product-name {
   line-height: 1.4;
 }
 .charts-row {
-  margin-bottom: 2.5vh;
+  margin-bottom: 20px;
 }
 </style>

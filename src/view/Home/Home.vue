@@ -262,7 +262,7 @@ const Layout = () => {
 <style scoped lang="less">
 
 .app-container {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -272,21 +272,21 @@ const Layout = () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2.5vh;
-  height: 7.5vh;
+  padding: 0 20px;
+  height: 56px;
   background-color: #ffffff;
-  box-shadow: 0 2px 1vh rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   z-index: 10;
 }
 
 .header-left {
   display: flex;
-  height: 3vh;
+  height: 24px;
   align-items: center;
 }
 
 .menu-toggle {
-  margin-right: 2vh;
+  margin-right: 16px;
 }
 
 .logo {
@@ -296,12 +296,12 @@ const Layout = () => {
 
 .logo-icon {
   color: #409eff;
-  font-size: 3vh;
-  margin-right: 1vh;
+  font-size: 20px;
+  margin-right: 8px;
 }
 
 .logo-text {
-  font-size: 2.2vh;
+  font-size: 16px;
   font-weight: 600;
   color: #1e293b;
 }
@@ -309,7 +309,7 @@ const Layout = () => {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 2.5vh;
+  gap: 20px;
 }
 .user-info {
   display: flex;
@@ -320,8 +320,8 @@ const Layout = () => {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 0.7vh;
-  border-radius: 0.5vh;
+  padding: 6px;
+  border-radius: 4px;
   transition: background-color 0.2s;
 }
 
@@ -330,12 +330,12 @@ const Layout = () => {
 }
 
 .user-name {
-  margin: 0 1vh;
-  font-size: 1.2vh;
+  margin: 0 8px;
+  font-size: 10px;
 }
 
 .arrow-icon {
-  font-size: 2vh;
+  font-size: 16px;
   color: #64748b;
 }
 
@@ -364,9 +364,9 @@ const Layout = () => {
 
 .sidebar-menu .el-menu-item,
 .sidebar-menu .el-sub-menu__title {
-  height: 6vh;
-  line-height: 6vh;
-  padding: 0 2vh;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 16px;
 }
 
 .sidebar-menu .el-menu-item.is-active {
@@ -375,24 +375,24 @@ const Layout = () => {
 
 .app-content {
   flex: 1;
-  padding: 2.5vh;
+  padding: 20px;
   overflow-y: auto;
 }
 .flex-box {
   height: 100%;
   display: flex;
-  gap: 1vh; 
+  gap: 8px; 
   align-items: center;
   .text{
     color: #e91196;
   }
   .tab-text{
-    margin-left: 0.5vh;
-    font-size: 1.4vh;
+    margin-left: 4px;
+    font-size: 12px;
   }
 }
 .tab {
-    padding: 0 1vh;
+    padding: 0 8px;
     height: 100%;
     background-color: rgba(0,5,0,0.1);
     .close {

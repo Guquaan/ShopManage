@@ -275,17 +275,10 @@ const resetSearch = () => {
 };
 
 // 加载表格数据
-const loadUserData = () => {
-  if (userManage.users.length > 0) {
-    userData.value = userManage.users;
-    total.value = userManage.users.length;
-    return;
-  } else {
-    // 生成模拟用户数据
-    userManage.getUsers(10)
-    userData.value = userManage.users;
-    total.value = userData.value.length;
-  }
+const loadUserData = async () => {
+  await userManage.getUsers();
+  userData.value = userManage.users;
+  total.value = userData.value.length;
 };
 
 // 分页处理和数据搜索处理
@@ -364,7 +357,7 @@ const handleEdit = (row: User) => {
 };
 
 // 处理更改用户状态
-const handleChangeStatus = (row: User) => {
+const handleChangeStatus = async (row: User) => {
   const newStatus = row.status === '正常' ? '禁用' : '正常';
   const message = row.status === '正常' ? '禁用' : '启用';
   ElMessageBox.confirm(
@@ -375,22 +368,20 @@ const handleChangeStatus = (row: User) => {
       cancelButtonText: '取消',
       type: 'warning'
     }
-  ).then(() => {
-    if (userManage.changeUserStatus(row.id, newStatus)) {
-      const index = userData.value.findIndex(item => item.id === row.id);
+  ).then(async () => {
+    try {
+      const id = String(row._id || row.id);
+      await userManage.changeUserStatus(id, newStatus);
+      const index = userData.value.findIndex(item => (item._id || item.id) === id);
       if (index !== -1) {
         userData.value[index]!.status = newStatus;
       }
-      ElMessage({
-        type: 'success',
-        message: `用户已${message}!`
-      });
+      ElMessage.success(`用户已${message}!`);
+    } catch {
+      // 错误已在 store 中处理
     }
   }).catch(() => {
-    ElMessage({
-      type: 'info',
-      message: '已取消操作'
-    });
+    ElMessage.info('已取消操作');
   });
 };
 
@@ -404,47 +395,37 @@ const handleDelete = (row: User) => {
       cancelButtonText: '取消',
       type: 'warning'
     }
-  ).then(() => {
-    if (userManage.deleteUser(row.id)) {
-      userData.value = userData.value.filter(item => item.id !== row.id);
-      ElMessage({
-        type: 'success',
-        message: '用户已删除!'
-      });
+  ).then(async () => {
+    try {
+      const id = String(row._id || row.id);
+      await userManage.deleteUser(id);
+      userData.value = userData.value.filter(item => (item._id || item.id) !== id);
+      ElMessage.success('用户已删除!');
+    } catch {
+      // 错误已在 store 中处理
     }
   }).catch(() => {
-    ElMessage({
-      type: 'info',
-      message: '已取消操作'
-    });
+    ElMessage.info('已取消操作');
   });
 };
 
 // 处理保存用户
 const handleSave = () => {
   if (!formRef.value) return;
-  formRef.value.validate((valid: boolean) => {
-    if (valid) {
+  formRef.value.validate(async (valid: boolean) => {
+    if (!valid) return;
+    try {
       if (handleEditOrAdd.value === 'edit') {
         // 编辑操作
-        userManage.editUser(form);
-        const index = userData.value.findIndex(item => item.id === form.id);
-        if (index !== -1) {
-          userData.value[index] = { ...form };
-        }
-        ElMessage({
-          type: 'success',
-          message: '编辑成功!'
-        });
+        await userManage.editUser(form);
       } else {
         // 新增操作
-        userManage.addUser(form);
-        ElMessage({
-          type: 'success',
-          message: '新增成功!'
-        });
+        await userManage.addUser(form);
       }
       dialogVisible.value = false;
+      await loadUserData();
+    } catch {
+      // 错误已在 store 中处理
     }
   });
 };
@@ -459,11 +440,10 @@ const handleDialogClose = () => {
 };
 
 // 页面加载时获取数据
-onMounted(() => {
-  setTimeout(() => {
-    loadUserData();
-    loading.value = false;
-  }, 800);
+onMounted(async () => {
+  loading.value = true;
+  await loadUserData();
+  loading.value = false;
 });
 </script>
 
@@ -472,15 +452,15 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6vh;
+  margin-bottom: 20px;
 }
 .content-actions {
   display: flex;
-  gap: 2vh;
+  gap: 10px;
 }
 
 .search-card {
-  margin-bottom: 4vh;
+  margin-bottom: 20px;
   background-color: #ffffff;
 }
 
@@ -489,7 +469,7 @@ onMounted(() => {
 }
 
 .pagination-container {
-  margin-top: 3vh;
+  margin-top: 20px;
   text-align: right;
 }
 </style>

@@ -137,9 +137,9 @@ const rules = reactive({
 // 创建store实例
 const authStore = useLoginManage()
 // 登录处理函数
-const handleLogin = () => {
+const handleLogin = async () => {
     const token = `321987${new Date().toString().replace(/\D/g, '')}`
-    const loginSuccess = authStore.loginWithForm(formData,token);
+    const loginSuccess = await authStore.loginWithForm(formData,token);
     if (loginSuccess) {
         // 登录成功后的操作
         console.log(token)
@@ -191,18 +191,18 @@ const handleRegister = () => {
 
 const submit = async (formEl: any) => {
     if (!formEl) return
-    await formEl.validate((valid: boolean, fields: any) => {
-        console.log('@', valid, '#', fields)
-        if (valid) {
-            if (formType.value) {
-                // 注册逻辑：保存新账号
-                handleRegister();
-            } else {
-                // 登录逻辑：验证账号并登录
-                handleLogin();
-            }
+    try {
+        await formEl.validate()
+        if (formType.value) {
+            // 注册逻辑：保存新账号
+            handleRegister();
+        } else {
+            // 登录逻辑：验证账号并登录
+            await handleLogin();
         }
-    });
+    } catch {
+        // 表单校验未通过，不做处理
+    }
 };
 </script>
 
@@ -248,17 +248,17 @@ img {
 
     .formLogin {
         background-color: #fff;
-        padding: 10vh;
-        border-radius: 3vh;
-        box-shadow: 0 0.5vh 3vh 0 rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.1);
         text-align: center;
         width: 50%;
 
         h4 {
             text-align: center;
-            margin-bottom: 5vh;
+            margin-bottom: 40px;
             color: #333;
-            font-size: 5vh;
+            font-size: 24px;
         }
 
         .el-form-item {
@@ -286,7 +286,7 @@ img {
 
     .link {
         text-align: right;
-        margin-bottom: 1.5vh;
+        margin-bottom: 12px;
 
     }
 }

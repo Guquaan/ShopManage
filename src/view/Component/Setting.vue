@@ -131,57 +131,57 @@ onMounted(() => {
 
 <style scoped>
 .system-settings {
-  padding: 2.5vh;
-  max-width: 100vh;
+  padding: 20px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
 .settings-card {
-  border-radius: 1vh;
-  box-shadow: 0 0.25vh 1.5vh 0 rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
 }
 
 .settings-header {
-  margin-bottom: 2.5vh;
-  padding-bottom: 1.25vh;
-  border-bottom: 0.125vh solid #f0f0f0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .settings-header h2 {
   margin: 0 0 10px 0;
   color: #1e293b;
-  font-size: 2.5vh;
+  font-size: 20px;
 }
 
 .settings-header p {
   margin: 0;
   color: #64748b;
-  font-size: 1.65vh;
+  font-size: 13px;
 }
 
 .setting-item {
-  margin-bottom: 3.125vh;
+  margin-bottom: 24px;
 }
 
 .setting-desc {
-  margin-top: 1vh;
+  margin-top: 8px;
   color: #64748b;
-  font-size: 1.7vh;
-  margin-left: 15vh; 
+  font-size: 14px;
+  margin-left: 120px; 
 }
 
 .account-management {
-  margin-top: 2.5vh;
+  margin-top: 20px;
 }
 
 .account-management h3 {
-  margin: 0 0 1.8vh 0;
+  margin: 0 0 14px 0;
   color: #1e293b;
-  font-size: 2vh;
+  font-size: 16px;
 }
 
 .account-actions {
-  margin-top: 2.5vh;
+  margin-top: 20px;
   display: flex;
   justify-content: flex-end;
 }

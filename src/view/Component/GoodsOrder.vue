@@ -114,7 +114,7 @@
       <el-table-column prop="productName" label="商品名称" min-width="180">
         <template #default="scope">
           <div class="product-info">
-            <img :src="scope.row.productImage" alt="商品图片" class="product-image" />
+            <img :src="scope.row.productImage || defaultImage" alt="商品图片" class="product-image" />
             <span class="product-name">{{ scope.row.productName }}</span>
           </div>
         </template>
@@ -206,7 +206,7 @@
               />
         </el-select>
       </el-form-item>
-      <el-form-item label="商品图片">
+      <el-form-item label="商品图片" v-if="form.productName">
         <el-upload
           class="upload-demo"
           :on-preview="handlePreview"
@@ -272,7 +272,8 @@ type OrderStatus = '待付款' | '已付款' | '已发货' | '已完成' | '已�
 
 // 订单接口定义
 interface Order {
-  id: number;
+  _id?: string;
+  id?: string | number;
   orderNo: string;
   productName: string;
   productImage?: string;
@@ -343,6 +344,7 @@ const rules = reactive({
 
 // 上传文件列表
 const fileList = ref<UploadUserFile[]>([]);
+const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IiNjY2MiIGZvbnQtc2l6ZT0iMTQiPuWbvueJhzwvdGV4dD48L3N2Zz4=';
 
 // 控制新增还是编辑
 const handleEditOrAdd = ref<'add' | 'edit'>('add');
@@ -360,21 +362,14 @@ const resetSearch = () => {
 };
 
 // 加载表格数据
-const loadordersData = () => {
-  if (orderManage.orders.length > 0) {
-    orderData.value = orderManage.orders;
-    total.value = orderManage.orders.length;
-    return;
-  } else {
-    // 确保商品数据已加载
-    if (goodsManage.goods.length === 0) {
-      goodsManage.getGoods(128);
-    }
-    // 生成模拟订单数据
-    orderManage.getOrders(20)
-    orderData.value = orderManage.orders;
-    total.value = orderData.value.length;
+const loadordersData = async () => {
+  // 确保商品数据已加载
+  if (goodsManage.goods.length === 0) {
+    await goodsManage.getGoods();
   }
+  await orderManage.getOrders();
+  orderData.value = orderManage.orders;
+  total.value = orderData.value.length;
 };
 
 // 分页处理和数据搜索处理
@@ -464,9 +459,10 @@ const handleAdd = () => {
     formRef.value.resetFields();
   }
   form.orderNo = `ORD${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-  form.quantity = 0;
+  form.quantity = 1;
   form.amount = 0;
   form.status = '待付款';
+  form.productImage = goodsManage.goods.find(item => item.name === form.productName)?.image || '';
   fileList.value = [];
   dialogVisible.value = true;
 };
@@ -495,22 +491,20 @@ const handleCancel = (row: Order) => {
       cancelButtonText: '取消',
       type: 'warning'
     }
-  ).then(() => {
-    if (orderManage.cancelOrders(row.id)) {
-      const index = orderData.value.findIndex(item => item.id === row.id);
+  ).then(async () => {
+    try {
+      const id = String(row._id || row.id);
+      await orderManage.cancelOrder(id);
+      const index = orderData.value.findIndex(item => (item._id || item.id) === id);
       if (index !== -1) {
         orderData.value[index]!.status = '已取消';
       }
-      ElMessage({
-        type: 'success',
-        message: '订单已取消!'
-      });
+      ElMessage.success('订单已取消!');
+    } catch {
+      // 错误已在 store 中处理
     }
   }).catch(() => {
-    ElMessage({
-      type: 'info',
-      message: '已取消操作'
-    });
+    ElMessage.info('已取消操作');
   });
 };
 
@@ -524,62 +518,54 @@ const handleShip = (row: Order) => {
       cancelButtonText: '取消',
       type: 'info'
     }
-  ).then(() => {
-    if (orderManage.shipOrder(row.id)) {
-      const index = orderData.value.findIndex(item => item.id === row.id);
+  ).then(async () => {
+    try {
+      const id = String(row._id || row.id);
+      await orderManage.shipOrder(id);
+      const index = orderData.value.findIndex(item => (item._id || item.id) === id);
       if (index !== -1) {
-        orderData .value[index]!.status = '已发货';
+        orderData.value[index]!.status = '已发货';
       }
-      ElMessage({
-        type: 'success',
-        message: '订单已发货!'
-      });
+      ElMessage.success('订单已发货!');
+    } catch {
+      // 错误已在 store 中处理
     }
   }).catch(() => {
-    ElMessage({
-      type: 'info',
-      message: '已取消操作'
-    });
+    ElMessage.info('已取消操作');
   });
 };
 
 // 处理保存订单
 const handleSave = () => {
   if (!formRef.value) return;
-  formRef.value.validate((valid: boolean) => {
-    if (valid) {
-      console.log(handleEditOrAdd.value);
+  formRef.value.validate(async (valid: boolean) => {
+    if (!valid) return;
+    try {
       if (handleEditOrAdd.value === 'edit') {
         // 编辑操作
-        orderManage.editOrders(form);
-        const index = orderData.value.findIndex(item => item.id === form.id);
-        if (index !== -1) {
-          orderData.value[index] = { ...form };
-        }
-        ElMessage({
-          type: 'success',
-          message: '编辑成功!'
-        });
+        await orderManage.editOrder(form);
       } else {
         // 新增操作
-        orderManage.addOrders(form);
-        ElMessage({
-          type: 'success',
-          message: '新增成功!'
-        });
+        await orderManage.addOrder(form);
       }
       dialogVisible.value = false;
+      await loadordersData();
+    } catch {
+      // 错误已在 store 中处理
     }
   });
 };
 
 // 处理数量变化自动计算金额
 const handleCount = () => {
+  const quantity = Number(form.quantity);
   const selectedGoods = goodsManage.goods.find(item => item.name === form.productName);
   if (selectedGoods) {
-    form.amount = selectedGoods.price * form.quantity;
+    form.amount = selectedGoods.price * (Number.isNaN(quantity) ? 0 : quantity);
+    form.productImage = selectedGoods.image || '';
   } else {
     form.amount = 0;
+    form.productImage = '';
   }
 };
 
@@ -617,11 +603,10 @@ const handlePreview = (file: any) => {
 };
 
 // 页面加载时获取数据
-onMounted(() => {
-  setTimeout(() => {
-    loadordersData();
-    loading.value = false;
-  }, 800);
+onMounted(async () => {
+  loading.value = true;
+  await loadordersData();
+  loading.value = false;
 });
 </script>
 
@@ -630,7 +615,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2.5vh;
+  margin-bottom: 20px;
 }
 .content-actions {
   display: flex;
@@ -638,12 +623,12 @@ onMounted(() => {
 }
 
 .search-card {
-  margin-bottom: 2.5vh;
+  margin-bottom: 20px;
   background-color: #ffffff;
 }
 
 .stats-row {
-  margin-bottom: 2.5vh;
+  margin-bottom: 20px;
 }
 
 .stat-card {
@@ -652,7 +637,7 @@ onMounted(() => {
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 1.25vh 2.5vh rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .stat-content {
@@ -662,16 +647,16 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 1.7vh;
+  font-size: 13px;
   color: #64748b;
-  margin: 0 0 0.625vh 0;
+  margin: 0 0 6px 0;
 }
 
 .stat-value {
-  font-size: 3vh;
+  font-size: 24px;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 0 0.625vh 0;
+  margin: 0 0 6px 0;
 }
 
 
@@ -727,7 +712,7 @@ onMounted(() => {
 }
 
 .pagination-container {
-  margin-top: 15px;
+  margin-top: 20px;
   text-align: right;
 }
 

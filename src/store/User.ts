@@ -1,117 +1,141 @@
 import { defineStore } from 'pinia';
-import areaData from '../data/Area.json'
-import { getRandomFourDigits } from '../data/Random';
+import request from '../api/request';
+import { ElMessage } from 'element-plus';
 
-// 用户状态类型
-type UserStatus = '正常' | '禁用';
-
-// 用户接口定义
-interface User {
-  id: number
-  username: string
-  realName: string
-  phone: string
-  address: string
-  status: UserStatus
-  createTime: string
-  updateTime?: string
+// 用户数据类型
+export interface User {
+  _id?: string;
+  id?: string;
+  username: string;
+  realName: string;
+  phone: string;
+  address: string;
+  status: string;
+  createTime: string;
+  updateTime?: string;
+  password?: string;
 }
-// 数组化地区数据用于随机生成地址
-const flattenAreas = (areas: any[]): string[] => {
-  const result: string[] = [];
-  const traverse = (items: any[], parent = '') => {
-    items.forEach(item => {
-      const fullAddress = parent ? `${parent} - ${item.label}` : item.label;
-      if (item.children && item.children.length) {
-        traverse(item.children, fullAddress);
-      } else if(!item.children){
-        result.push(fullAddress);
-      }
-    });
-  };
-  traverse(areas);
-  return result;
-};
 
-const addressList = flattenAreas(areaData);
+// 将 MongoDB 的 _id 映射为 id 便于前端使用
+function normalizeUser(item: any): User {
+  return {
+    ...item,
+    id: item._id || item.id,
+    _id: item._id
+  };
+}
 
 export const UserManage = defineStore('user', {
-    state: (): { users: User[] } => ({
-      users: localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')!) : []
-    }),
+  state: (): { users: User[]; loading: boolean } => ({
+    users: [],
+    loading: false
+  }),
+
   actions: {
-    // 获取虚拟用户数据
-    getUsers(total: number) {
-      const statuses: UserStatus[] = ['正常', '禁用'];
-      const users: User[] = [];
-      for (let i = 0; i < total; i++) {
-        const id = getRandomFourDigits()
-        // 随机选择一个地址
-        const randomAddress = addressList[Math.floor(Math.random() * addressList.length)]
-        users.push({
-          id,
-          username: `客户${id}`,
-          realName: `用户${id}`,
-          phone: `13${Math.floor(Math.random() * 900000000 + 100000000)}`,
-          address: randomAddress!,
-          status: statuses[Math.floor(Math.random() * statuses.length)]!,
-          createTime: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toLocaleString()
-        });
+    // 获取用户列表（支持筛选参数）
+    async getUsers(params?: Record<string, string>) {
+      this.loading = true;
+      try {
+        const res = await request.get('/users/list', { params });
+        this.users = (res.data || []).map(normalizeUser);
+        return this.users;
+      } catch (err: any) {
+        ElMessage.warning('无法连接后端服务');
+        return this.users;
+      } finally {
+        this.loading = false;
       }
-      this.users = users;
-      localStorage.setItem('users', JSON.stringify(users));
+    },
+
+    // 获取单个用户详情
+    async getUserById(id: string) {
+      try {
+        const res = await request.get(`/users/detail/${id}`);
+        return normalizeUser(res.data);
+      } catch (err: any) {
+        ElMessage.error('获取用户详情失败');
+        throw err;
+      }
     },
 
     // 添加用户
-    addUser(user: User) {
-      const id = user.id
-      const newUser: User = {
-        ...user,
-        id,
-        createTime: new Date().toLocaleString()
-      };
-      
-      this.users.unshift(newUser);
-      localStorage.setItem('users', JSON.stringify(this.users));
-      return newUser;
+    async addUser(user: User) {
+      try {
+        const res = await request.post('/users/add', {
+          username: user.username,
+          realName: user.realName,
+          phone: user.phone,
+          address: user.address || '',
+          status: user.status || '正常',
+          password: user.password || ''
+        });
+        const newItem = normalizeUser(res.data);
+        this.users.unshift(newItem);
+        ElMessage.success('用户添加成功');
+        return newItem;
+      } catch (err: any) {
+        ElMessage.error('添加用户失败: ' + (err.message || '网络错误'));
+        throw err;
+      }
     },
 
     // 编辑用户
-    editUser(user: User) {
-      const index = this.users.findIndex(item => item.id === user.id);
-      if (index !== -1) {
-        this.users[index] = {
-          ...this.users[index],
-          ...user,
-          updateTime: new Date().toLocaleString()
-        };
-        localStorage.setItem('users', JSON.stringify(this.users));
-        return this.users[index];
+    async editUser(user: User) {
+      try {
+        const id = user._id || user.id;
+        const res = await request.put(`/users/update/${id}`, {
+          username: user.username,
+          realName: user.realName,
+          phone: user.phone,
+          address: user.address || '',
+          status: user.status
+        });
+        const updated = normalizeUser(res.data);
+        const index = this.users.findIndex(
+          item => (item._id || item.id) === id
+        );
+        if (index !== -1) {
+          this.users[index] = updated;
+        }
+        ElMessage.success('用户编辑成功');
+        return updated;
+      } catch (err: any) {
+        ElMessage.error('编辑用户失败: ' + (err.message || '网络错误'));
+        throw err;
       }
-      return null;
     },
 
     // 更改用户状态
-    changeUserStatus(id: number, status: UserStatus) {
-      const index = this.users.findIndex(item => item.id === id);
-      if (index !== -1) {
-        this.users[index]!.status = status;
-        this.users[index]!.updateTime = new Date().toLocaleString();
-        localStorage.setItem('users', JSON.stringify(this.users));
+    async changeUserStatus(id: string, status: string) {
+      try {
+        const res = await request.put(`/users/update/${id}`, { status });
+        const updated = normalizeUser(res.data);
+        const index = this.users.findIndex(
+          item => (item._id || item.id) === id
+        );
+        if (index !== -1) {
+          this.users[index] = updated;
+        }
         return true;
+      } catch (err: any) {
+        ElMessage.error('更改用户状态失败');
+        throw err;
       }
-      return false;
     },
 
     // 删除用户
-    deleteUser(id: number) {
-      const index = this.users.findIndex(item => item.id === id);
-      if (index !== -1) {
-        this.users.splice(index, 1);
-        localStorage.setItem('users', JSON.stringify(this.users));
+    async deleteUser(id: string) {
+      try {
+        await request.delete(`/users/delete/${id}`);
+        this.users = this.users.filter(
+          item => (item._id || item.id) !== id
+        );
+        ElMessage.success('用户删除成功');
         return true;
+      } catch (err: any) {
+        ElMessage.error('删除用户失败: ' + (err.message || '网络错误'));
+        throw err;
       }
-      return false;
     }
   }
 });

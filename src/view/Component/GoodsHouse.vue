@@ -101,11 +101,9 @@ const searchName = ref('');
 const selectedCategory = ref('');
 
 // 加载商品数据
-const loadGoodsData = () => {
+const loadGoodsData = async () => {
   if (goodsStore.goods.length === 0) {
-    // 如果没有数据，初始化一些示例数据
-    goodsStore.getGoods(20);
-    location.reload();
+    await goodsStore.getGoods();
   }
 };
 
@@ -140,21 +138,21 @@ onMounted(() => {
 
 <style lang="css" scoped>
 .warehouse-view {
-  padding: 2.5vh;
-  max-width: 150vh;
+  padding: 20px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .filter-card {
-  margin-bottom: 2.5vh;
-  padding: 1.8vh;
+  margin-bottom: 20px;
+  padding: 16px;
 }
 
 .goods-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 2.5vh;
-  margin-top: 2.5vh;
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .goods-card {

@@ -1,39 +1,36 @@
-const { Sequelize } = require('sequelize');
-const mysql = require('mysql2/promise');
-const dotenv = require('dotenv');
-
+import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
 dotenv.config();
 
-// 如果数据库不存在，首先创建一个
-const dbConfig = {
-    name: process.env.DB_NAME || 'shopmanage',
-    user: process.env.DB_USER || 'root',
-    pass: process.env.DB_PASS || '123456',
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 3306,
-}
-let sequelize = null
-async function initSequelize() {
-  // 先用 mysql2 连接创建数据库（如果不存在）
-  const connection = await mysql.createConnection({
-    host: dbConfig.host,
-    user: dbConfig.user,
-    password: dbConfig.pass,
-    port: dbConfig.port
-  });
-  await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbConfig.name}\`;`);
-  await connection.end();
+const url = process.env.MONGO_URI || 'mongodb://localhost:27017';
+const dbName = process.env.DB_NAME || 'Goods';
 
-  // 然后创建 Sequelize 实例
-  sequelize = new Sequelize(dbConfig.name, dbConfig.user, dbConfig.pass, {
-    host: dbConfig.host,
-    dialect: 'mysql',
-    port: dbConfig.port
-  });
+const client = new MongoClient(url);
 
-  await sequelize.authenticate();
-  console.log('Sequelize: 数据库连接成功');
-  return sequelize;
+let db = null;
+
+async function connectDB() {
+  if (db) return db;
+  try {
+    await client.connect();
+    db = client.db(dbName);
+    console.log(`✅ MongoDB 连接成功，数据库: ${dbName}`);
+    return db;
+  } catch (err) {
+    console.error('❌ MongoDB 连接失败:', err.message);
+    process.exit(1);
+  }
 }
 
-module.exports = { initSequelize, getSequelize: () => sequelize };
+function getDB() {
+  if (!db) {
+    throw new Error('数据库未连接，请先调用 connectDB()');
+  }
+  return db;
+}
+
+function getCollection(name) {
+  return getDB().collection(name);
+}
+
+export { connectDB, getDB, getCollection };

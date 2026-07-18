@@ -294,43 +294,41 @@ const initTopProductsChart = () => {
 
 // 页面加载时初始化
 onMounted(() => {
-  setTimeout(() => {
-    initTrendChart();
-    initCategoryChart();
-    initTopProductsChart();
-  }, 800);
+  initTrendChart();
+  initCategoryChart();
+  initTopProductsChart();
 });
 </script>
 
 <style lang="css" scoped>
 .sales-report-charts {
-  padding: 2.5vh;
-  max-width: 150vh;
+  padding: 20px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .chart-container {
-  margin-bottom: 3.75vh;
+  margin-bottom: 30px;
   background-color: #fff;
-  border-radius: 1vh;
-  box-shadow: 0 0.25vh 1.5vh 0 rgba(0, 0, 0, 0.08);
-  padding: 2.5vh;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  padding: 20px;
 }
 
 .chart-container h3 {
-  margin: 0 0 2vh 0;
+  margin: 0 0 16px 0;
   color: #1e293b;
-  font-size: 2vh;
+  font-size: 16px;
   font-weight: 600;
 }
 
 .chart-box {
   width: 100%;
-  height: 50vh;
+  height: 400px;
 }
 @media (max-width: 768px) {
   .chart-box {
-    height: 42.5vh;
+    height: 350px;
   }
 }
 </style>
